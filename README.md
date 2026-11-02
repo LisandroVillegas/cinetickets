@@ -14,7 +14,7 @@
 
 # \- Andrés Cuellar    — Responsable de documentación
 
-# \- Alexander Henao   — Responsable de calidad
+# \- Alexander Henao   — Responsable de calidad - GitHub:@henaoaa
 
 # \- Lenin Herrera     — Responsable de pruebas
 
