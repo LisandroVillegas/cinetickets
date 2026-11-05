@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PeliculaFuncionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/funciones');
+
+Route::patch('funciones/{funcion}/desactivar', [PeliculaFuncionController::class, 'desactivar'])
+    ->name('funciones.desactivar');
+
+Route::resource('funciones', PeliculaFuncionController::class)
+    ->parameters(['funciones' => 'funcion'])
+    ->except(['show']);
+
