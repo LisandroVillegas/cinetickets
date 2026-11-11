@@ -16,7 +16,8 @@ Sistema web de gestión de funciones de cine y venta de entradas, desarrollado p
 Implementación local del 10 de noviembre de 2026, sobre la base `21d35d2`, en la rama `feat/anulacion-boletos`.
 
 - RF-01: gestión de funciones implementada en controlador, vistas y pruebas.
-- RF-02 y RF-03: modelos y rutas disponibles; controladores con respuestas 501 de funcionalidad pendiente.
+- RF-02: venta integrada en main; formulario, cálculo del monto y descuento de cupos comprobados localmente.
+- RF-03: consulta y edición pendientes de integrar desde la rama de Andrés; BoletoController sigue devolviendo 501.
 - RF-04: anulación implementada con transacción, bloqueo, validación de fecha y devolución única de asientos. Formulario disponible en `resources/views/boletos/_anular.blade.php`; falta incluirlo en el listado de Andrés, aún pendiente.
 - La edición de capacidad relee la función bajo bloqueo para no sobrescribir una devolución concurrente.
 - Suite existente ejecutada: 33 pruebas, 90 aserciones, sin fallos. No se añadieron ni modificaron archivos de pruebas por indicación del responsable. Ver límites y comprobaciones temporales en el informe de calidad.
@@ -40,7 +41,7 @@ php artisan migrate
 php artisan serve
 ```
 
-Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Composer y la suite se ejecutaron localmente. El recorrido web completo sigue pendiente por los módulos de venta y listado. La zona horaria es America/Bogota; en instalaciones anteriores se debe revisar cómo se guardaron las fechas antes de desplegar el cambio. No se convirtieron datos existentes.
+Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Composer y la suite se ejecutaron localmente. El recorrido web completo sigue pendiente por el listado. La zona horaria es America/Bogota; en instalaciones anteriores se debe revisar cómo se guardaron las fechas antes de desplegar el cambio. No se convirtieron datos existentes.
 
 ## Pruebas
 
@@ -62,3 +63,7 @@ php artisan test
 Enlace al tablero de Trello: pendiente de incorporar por el equipo.
 
 Los lineamientos requieren las etiquetas `entrega-s1`, `entrega-s2` y `entrega-final`, y entregar sus enlaces junto con Trello. Fechas indicadas: 2 y 9 de noviembre para seguimientos; 18 de noviembre de 2026 a las 11:59 p. m. para entrega final; sustentación el 25 de noviembre. Esta revisión no verifica entregas en Classroom ni acceso del docente.
+
+## Verificación de la fusión a main — 2026-11-10
+
+La integración de Alex-henao conserva la venta previamente incorporada en main. Pasaron las 33 pruebas existentes (90 aserciones) y 12 comprobaciones temporales externas (63 aserciones): anulación, capacidad y venta seguida de anulación. No se añadieron tests al repositorio. La consulta y edición de Andrés y la incorporación del botón al listado siguen pendientes; la redirección a boletos.index todavía responde 501. No se certifica el flujo completo ni la concurrencia de venta/anulación en MySQL de destino.

@@ -70,3 +70,9 @@ D-01 a D-03 se conservan como historial. La suite actual verifica las vistas y m
 | Mantener informe y seguimiento de defectos | Alexander | Commit revisado, comandos, resultados y pendientes reales |
 
 RF-04 tiene lógica implementada y verificada localmente; su integración de interfaz permanece pendiente. La revisión adicional del código no encontró defectos funcionales en los cambios examinados. El proyecto completo aún no está terminado.
+
+## Verificación posterior de fusión a main — 2026-11-10
+
+Main ya contenía RF-02 y recibió Alex-henao sin conflictos. Se ejecutó la suite existente: 33 aprobadas, 90 aserciones. Las comprobaciones temporales externas sumaron 12 aprobadas, 63 aserciones, incluyendo venta de 3 entradas, monto calculado en servidor, rechazo de sobrecupo, anulación y rechazo de doble devolución. No se modificaron tests del repositorio.
+
+Esta actualización reemplaza el estado anterior de VentaController pendiente: ventas está implementada. BoletoController sigue devolviendo 501; no se incorporó la rama de Andrés. El recorrido completo de interfaz y la concurrencia de venta/anulación en MySQL de destino siguen pendientes. Las comprobaciones de esta fusión usaron SQLite en memoria, sin datos reales.
