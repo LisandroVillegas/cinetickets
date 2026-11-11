@@ -21,16 +21,21 @@ class BoletoController extends Controller
             'funcion' => ['nullable', 'integer', 'exists:Pelicula_Funcion,id_funcion'],
         ]);
 
-        $boletos = BoletoReserva::with('funcion')
-            ->when($filtros['cliente'] ?? null, function ($consulta, $cliente) {
-                $consulta->where(function ($consultaCliente) use ($cliente) {
-                    $consultaCliente->where('nombre_cliente', 'like', "%{$cliente}%")
-                        ->orWhere('email_cliente', 'like', "%{$cliente}%");
-                });
-            })
-            ->when($filtros['funcion'] ?? null, function ($consulta, $funcion) {
-                $consulta->where('id_funcion', $funcion);
-            })
+                $consultaBoletos = BoletoReserva::with('funcion');
+        $cliente = $filtros['cliente'] ?? '';
+
+        if ($cliente !== '') {
+            $consultaBoletos->where(function ($consultaCliente) use ($cliente) {
+                $consultaCliente->where('nombre_cliente', 'like', "%{$cliente}%")
+                    ->orWhere('email_cliente', 'like', "%{$cliente}%");
+            });
+        }
+
+        if (!empty($filtros['funcion'])) {
+            $consultaBoletos->where('id_funcion', $filtros['funcion']);
+        }
+
+        $boletos = $consultaBoletos
             ->orderByDesc('fecha_compra')
             ->orderByDesc('id_boleto')
             ->paginate(15)
@@ -70,7 +75,20 @@ class BoletoController extends Controller
         ]);
 
         // Solo se guardan estos dos campos; cantidad y funcion no se modifican.
-        $boleto->update($datos);
+        // El UPDATE comprueba el estado en la misma operacion que guarda los datos.
+        $actualizados = BoletoReserva::query()
+            ->whereKey($boleto->getKey())
+            ->where('estado', 'Confirmado')
+            ->update($datos);
+
+        if ($actualizados === 0) {
+            $boleto->refresh();
+
+            if ($boleto->estado !== 'Confirmado') {
+                return redirect()->route('boletos.index')
+                    ->with('error', 'El boleto ya no esta confirmado y no se puede editar.');
+            }
+        }
 
         return redirect()->route('boletos.index')
             ->with('exito', 'Los datos del cliente se actualizaron correctamente.');
