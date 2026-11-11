@@ -1,7 +1,7 @@
 # Plan de pruebas: CineTickets
 
 **Asignatura:** Ingeniería de Software II · Cotecnova · 2026-2
-**Etapa:** Seguimiento 1
+**Etapa:** base de Seguimiento 1 y planificación de RF-04
 **Responsable de pruebas:** Lenin Aníbal Herrera Salgado
 
 ## 1. Objetivo y alcance
@@ -72,3 +72,29 @@ Verificar que la gestión de funciones (RF-01) cumple sus criterios de aceptaci�
 | Fecha | Ejecutó | Pruebas | Pasaron | Fallaron | Observaciones |
 | --- | --- | --- | --- | --- | --- |
 | 2026-11-05 | Lisandro Villegas Henao | 33 | 33 | 0 | Ejecución exitosa de todas las pruebas automatizadas de RF-01 y relaciones 1:N en PHPUnit usando SQLite en memoria. |
+
+## 7. Estado de la revisión del 2026-11-10
+
+El resultado del 2026-11-05 es histórico y se conserva como fue registrado. No se volvió a ejecutar la suite en esta revisión: falta vendor/autoload.php. Los casos siguientes están diseñados, todavía no automatizados ni ejecutados. La prueba de ejemplo de tests/Unit no acredita una regla de negocio.
+
+## 8. Casos propuestos para anulación
+
+Base común: reloj fijo en America/Bogota, función futura con capacidad 60 y 50 disponibles, boleto Confirmado de 3 entradas y monto 30000. Los restantes 7 asientos vendidos deben representarse con otros boletos confirmados cuando se compruebe la consistencia global.
+
+| ID | Criterio / técnica | Escenario | Resultado esperado |
+| --- | --- | --- | --- |
+| AN-01 | CA-04.1 y CA-04.2 / clase válida | Anular boleto confirmado | Cancelado, 53 disponibles, monto 30000 y registro conservado |
+| AN-02 | CA-04.3 / transición inválida | Repetir AN-01 | Error, permanecen 53 disponibles |
+| AN-03 | Decisión 3 / clase válida | Función futura Inactiva | Anulación permitida, devuelve 3 |
+| AN-04 | Decisión 3 / límite | Función un segundo antes del reloj actual | Rechazo sin cambios |
+| AN-05 | Decisión 3 / límite propuesto | Función exactamente ahora | Rechazo sin cambios; confirmar esta precisión con el equipo |
+| AN-06 | Decisión 3 / límite | Función un segundo después de ahora | Anulación permitida |
+| AN-07 | Manejo de errores | ID inexistente | 404, ningún cupo modificado |
+| AN-08 | Atomicidad / fallo inyectado | Excepción al persistir una de las escrituras | Rollback: Confirmado y 50 disponibles; ningún mensaje de éxito |
+| AN-09 | Integridad / dato inconsistente | 59 disponibles y boleto de 3 con capacidad 60 | Rechazo, cupo 59 y boleto sin cambios |
+| AN-10 | CA-04.3 / concurrencia MySQL | Dos solicitudes simultáneas para el mismo boleto | Una anulación efectiva, cupo 53 |
+| AN-11 | Integración RF-02 / concurrencia MySQL | Venta de 2 y anulación de 3 simultáneas | Si ambas tienen éxito, cupo 51 |
+| AN-12 | Integración RF-01 / concurrencia MySQL | Cambiar capacidad mientras se anula | Cupo igual a capacidad final menos entradas confirmadas; sin pérdida de actualización |
+| AN-13 | Interfaz / recorrido manual | Confirmar o rechazar el diálogo del botón | Confirmar actualiza estado; rechazar no envía solicitud |
+
+Comando previsto para pruebas funcionales: `php artisan test --filter=AnulacionBoletoTest`. Para regresión: `php artisan test`. AN-10 a AN-12 requieren conexiones independientes en MySQL y configuración dedicada por crear; SQLite no acredita esos bloqueos. Registrar el comando de esa suite cuando exista.
