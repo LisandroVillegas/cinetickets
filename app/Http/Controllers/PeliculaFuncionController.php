@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PeliculaFuncion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
@@ -75,24 +76,24 @@ class PeliculaFuncionController extends Controller
     /** Actualizar una función. */
     public function update(Request $request, PeliculaFuncion $funcion): RedirectResponse
     {
-        $datos = $this->validar($request, $funcion);
+        return DB::transaction(function () use ($request, $funcion): RedirectResponse {
+            // Releer bajo bloqueo: una venta o anulación puede haber cambiado los cupos.
+            $actual = PeliculaFuncion::whereKey($funcion->id_funcion)->lockForUpdate()->firstOrFail();
+            $datos = $this->validar($request, $actual);
+            $vendidos = $actual->capacidad_total - $actual->asientos_disponibles;
 
-        // Decisión 2: la capacidad nueva no puede ser menor que los asientos ya vendidos.
-        $vendidos = $funcion->capacidad_total - $funcion->asientos_disponibles;
+            if ($datos['capacidad_total'] < $vendidos) {
+                return back()->withInput()->withErrors([
+                    'capacidad_total' => "La capacidad no puede ser menor que los asientos ya vendidos ($vendidos).",
+                ]);
+            }
 
-        if ($datos['capacidad_total'] < $vendidos) {
-            return back()->withInput()->withErrors([
-                'capacidad_total' => "La capacidad no puede ser menor que los asientos ya vendidos ($vendidos).",
-            ]);
-        }
+            $datos['asientos_disponibles'] = $datos['capacidad_total'] - $vendidos;
+            $actual->update($datos);
 
-        // Los asientos disponibles se recalculan; nunca quedan negativos.
-        $datos['asientos_disponibles'] = $datos['capacidad_total'] - $vendidos;
-
-        $funcion->update($datos);
-
-        return redirect()->route('funciones.index')
-            ->with('exito', 'Función actualizada correctamente.');
+            return redirect()->route('funciones.index')
+                ->with('exito', 'Función actualizada correctamente.');
+        }, 3);
     }
 
     /** Desactivar una función (inactivación lógica). */
