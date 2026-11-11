@@ -98,3 +98,12 @@ Base común: reloj fijo en America/Bogota, función futura con capacidad 60 y 50
 | AN-13 | Interfaz / recorrido manual | Confirmar o rechazar el diálogo del botón | Confirmar actualiza estado; rechazar no envía solicitud |
 
 Comando previsto para pruebas funcionales: `php artisan test --filter=AnulacionBoletoTest`. Para regresión: `php artisan test`. AN-10 a AN-12 requieren conexiones independientes en MySQL y configuración dedicada por crear; SQLite no acredita esos bloqueos. Registrar el comando de esa suite cuando exista.
+
+
+## 9. Verificación de implementación — 2026-11-10
+
+Se ejecutó `php artisan test`: **33 pruebas aprobadas, 90 aserciones** en PHP 8.5.12, Laravel 10.50.4 y SQLite en memoria. La suite existente quedó intacta.
+
+Por petición del usuario, no se incorporaron nuevas pruebas al repositorio. Como comprobación local del implementador, fuera del proyecto se ejecutaron 10 casos de anulación y renderizado del parcial (45 aserciones) y un caso de capacidad desactualizada (1 aserción), todos aprobados. Estos archivos temporales no sustituyen la automatización que debe entregar Lenin.
+
+AN-10 y AN-12 se comprobaron con dos procesos independientes en MariaDB 11.8.8 mediante el controlador mysql: se observaron ambas consultas esperando el bloqueo antes de liberarlo; la doble anulación devolvió asientos una vez, y la edición concurrente conservó el cupo correcto. No se ejecutó sobre MySQL de destino. AN-11 sigue pendiente por la venta no implementada. AN-13 solo tiene verificación del renderizado; el recorrido de navegador y su confirmación quedan pendientes del listado.

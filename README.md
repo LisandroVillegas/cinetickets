@@ -13,11 +13,13 @@ Sistema web de gestión de funciones de cine y venta de entradas, desarrollado p
 
 ## Estado revisado
 
-Revisión estática del 10 de noviembre de 2026, sobre el commit `24acf39`.
+Implementación local del 10 de noviembre de 2026, sobre la base `21d35d2`, en la rama `feat/anulacion-boletos`.
 
 - RF-01: gestión de funciones implementada en controlador, vistas y pruebas.
-- RF-02, RF-03 y RF-04: modelos y rutas disponibles; controladores con respuestas 501 de funcionalidad pendiente. No existen aún vistas de ventas o boletos.
-- No se ejecutó la aplicación ni la suite en esta revisión: falta `vendor/autoload.php`.
+- RF-02 y RF-03: modelos y rutas disponibles; controladores con respuestas 501 de funcionalidad pendiente.
+- RF-04: anulación implementada con transacción, bloqueo, validación de fecha y devolución única de asientos. Formulario disponible en `resources/views/boletos/_anular.blade.php`; falta incluirlo en el listado de Andrés, aún pendiente.
+- La edición de capacidad relee la función bajo bloqueo para no sobrescribir una devolución concurrente.
+- Suite existente ejecutada: 33 pruebas, 90 aserciones, sin fallos. No se añadieron ni modificaron archivos de pruebas por indicación del responsable. Ver límites y comprobaciones temporales en el informe de calidad.
 
 ## Preparación y ejecución local
 
@@ -38,7 +40,7 @@ php artisan migrate
 php artisan serve
 ```
 
-Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Estas instrucciones se derivan del código; no se validaron ejecutándolas en esta revisión.
+Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Composer y la suite se ejecutaron localmente. El recorrido web completo sigue pendiente por los módulos de venta y listado. La zona horaria es America/Bogota; en instalaciones anteriores se debe revisar cómo se guardaron las fechas antes de desplegar el cambio. No se convirtieron datos existentes.
 
 ## Pruebas
 
@@ -46,7 +48,7 @@ Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CD
 php artisan test
 ```
 
-`phpunit.xml` configura SQLite en memoria. Las pruebas existentes cubren funciones y relaciones; `tests/Unit/ExampleTest.php` es una prueba de ejemplo, no de negocio. La concurrencia deberá comprobarse en una base MySQL exclusiva para pruebas.
+`phpunit.xml` configura SQLite en memoria. Las pruebas existentes cubren funciones y relaciones; `tests/Unit/ExampleTest.php` es una prueba de ejemplo, no de negocio. Se comprobaron dos escenarios concurrentes en MariaDB 11.8.8 con el controlador mysql, fuera del repositorio. Quedan pendientes la validación en la versión MySQL de destino y la integración con la venta real.
 
 ## Documentación
 
