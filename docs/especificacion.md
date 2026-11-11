@@ -127,3 +127,22 @@ Cada entrega se marca con una etiqueta de Git en la rama principal:
 - Seguimiento 1: `entrega-s1`
 - Seguimiento 2 (lunes 9 de noviembre, 11:59 p. m.): `entrega-s2`
 - Entrega final (miércoles 18 de noviembre, 11:59 p. m.): `entrega-final`
+
+
+## 9. Distribución y estado de implementación revisado
+
+Corte: 2026-11-10, commit `24acf39`. Los requisitos anteriores describen el alcance acordado; esta sección distingue ese alcance de lo implementado. Revisión de código, sin ejecución.
+
+| Módulo | Archivos y métodos | Estado |
+| --- | --- | --- |
+| Funciones, RF-01 | `PeliculaFuncionController`: index, create, store, edit, update, desactivar, destroy; `resources/views/funciones/` | Implementado; pendiente de nueva ejecución de pruebas |
+| Venta, RF-02 — Lisandro | `VentaController`: create, store | Esqueleto: responde 501 |
+| Consulta y edición — Andrés | `BoletoController`: index, edit, update | Esqueleto: responde 501 |
+| Anulación, RF-04 — Alexander | `AnulacionController`: anular | Esqueleto: responde 501 |
+| Pruebas — Lenin | `tests/Feature/PeliculaFuncionCrudTest.php`, `RelacionFuncionBoletoTest.php` | Pruebas existentes de RF-01 y relación 1:N; faltan los otros flujos |
+
+`routes/web.php` ya registra `ventas.create`, `ventas.store`, `boletos.index`, `boletos.edit`, `boletos.update` y `boletos.anular`. No deben duplicarse al implementar.
+
+Los modelos `PeliculaFuncion` y `BoletoReserva` y sus migraciones existen. La relación utiliza `id_funcion`; el boleto usa `id_boleto` como clave primaria. No se requiere una nueva tabla para anular. Las vistas de ventas y boletos están pendientes.
+
+El [plan de anulación](plan-implementacion-anulacion.md) propone los detalles de transacción, pruebas e integración. Sus decisiones pendientes no sustituyen los requisitos aprobados. La configuración actual usa UTC, aunque el informe establece America/Bogota como zona prevista.
