@@ -4,9 +4,21 @@
 
 @section('contenido')
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h3 mb-0">Cartelera de funciones</h1>
-        <a href="{{ route('funciones.create') }}" class="btn btn-primary">Nueva función</a>
+    <h1 class="h3 mb-0">Cartelera de funciones</h1>
+
+    <div>
+        <a href="{{ route('ventas.create') }}" class="btn btn-success">
+            <i class="fas fa-ticket-alt"></i> Vender boletos
+        </a>
+
+        <a href="{{ route('funciones.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva función
+        </a>
     </div>
+</div>
+
+
+    
 
     <div class="table-responsive">
         <table class="table table-striped table-bordered align-middle bg-white">
