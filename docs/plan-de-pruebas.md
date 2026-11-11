@@ -1,18 +1,18 @@
 # Plan de pruebas: CineTickets
 
 **Asignatura:** Ingeniería de Software II · Cotecnova · 2026-2
-**Etapa:** base de Seguimiento 1 y planificación de RF-04
+**Etapa:** Seguimiento 1 y Seguimiento 2 (RF-01 a RF-04)
 **Responsable de pruebas:** Lenin Aníbal Herrera Salgado
 
 ## 1. Objetivo y alcance
 
-Verificar que la gestión de funciones (RF-01) cumple sus criterios de aceptación (CA-01.1 a CA-01.5) y las decisiones de diseño acordadas por el equipo.
+Verificar los requisitos RF-01 a RF-04 y las decisiones de diseño acordadas por el equipo: gestión de funciones, venta de boletos, consulta/edición y anulación con devolución de asientos.
 
-| Incluido en el Seguimiento 1 | Pendiente para el Seguimiento 2 |
+| Incluido en el Seguimiento 1 | Incorporado en el Seguimiento 2 (2026-11-11) |
 | --- | --- |
-| RF-01: registrar, consultar, actualizar, desactivar y eliminar funciones | RF-02: venta de boletos, cálculo de `monto_total` y control de aforo |
-| Relación 1:N entre `Pelicula_Funcion` y `Boleto_Reserva` | RF-03: consulta de ventas y validación del correo |
-| | RF-04: anulación de boletos y devolución de asientos |
+| RF-01: registrar, consultar, actualizar, desactivar y eliminar funciones | RF-02: venta, cálculo de `monto_total` y control de aforo (automatizado) |
+| Relación 1:N entre `Pelicula_Funcion` y `Boleto_Reserva` | RF-03: consulta, filtros, edición y validación del correo (automatizado) |
+| | RF-04: anulación y devolución de asientos (automatizado) |
 
 ## 2. Técnicas de diseño de casos
 
@@ -57,25 +57,30 @@ Verificar que la gestión de funciones (RF-01) cumple sus criterios de aceptaci�
 | CP-30 | Decisión 6 | Integración | Borrar una función con boletos en la base de datos | La base de datos lo impide (llave foránea) | `test_cp30_la_base_de_datos_impide_borrar_...` |
 | CP-31 | RF-01 | Clase válida | Abrir la cartelera | Responde 200 y muestra las funciones | `test_cp31_la_cartelera_carga` |
 
-## 5. Casos previstos para el Seguimiento 2
+## 5. Casos del Seguimiento 2 automatizados
 
-| Requisito | Casos previstos |
-| --- | --- |
-| CA-02.2 y CA-02.3 | Cantidad de entradas 0, 1, igual a los asientos disponibles y mayor que ellos |
-| CA-02.4 | Cálculo de `monto_total` = cantidad × precio unitario |
-| CA-02.5 | La compra descuenta los asientos disponibles y no permite sobreventa |
-| CA-03.2 | Validación del formato del correo (válidos e inválidos) |
-| CA-04.1 a CA-04.3 | Anular un boleto, devolver los asientos y rechazar la doble anulación |
+| Requisito | Casos cubiertos | Archivo |
+| --- | --- | --- |
+| CA-02.1 | Solo funciones activas, con cupo y futuras; rechazo de inactivas, agotadas, pasadas e inexistentes | `VentaBoletosTest.php` |
+| CA-02.2 y CA-02.3 | Cantidad 0, negativa, decimal, texto y nula; compra exacta del cupo; sobrecupo con mensaje del máximo disponible | `VentaBoletosTest.php` |
+| CA-02.4 | Cálculo de `monto_total` = cantidad × precio unitario, ignorando el monto enviado por el cliente | `VentaBoletosTest.php` |
+| CA-02.5 | La compra descuenta los asientos disponibles | `VentaBoletosTest.php` |
+| CA-03.1 | Listado, filtros por cliente/correo/función, filtros combinados y paginación | `ConsultaBoletosTest.php` |
+| CA-03.2 | Validación del formato del correo al vender y al editar | `VentaBoletosTest.php`, `ConsultaBoletosTest.php` |
+| Decisión 1 | Solo se actualizan nombre y correo; cantidad, monto, función y estado no cambian | `ConsultaBoletosTest.php` |
+| CA-04.1 a CA-04.3 | Anular, devolver asientos una sola vez y rechazar la doble anulación | `AnulacionBoletosTest.php` |
+| Decisión 3 | Función futura, inactiva futura, pasada, instante exacto y límites de un segundo | `AnulacionBoletosTest.php` |
 
 ## 6. Resultados de ejecución
 
 | Fecha | Ejecutó | Pruebas | Pasaron | Fallaron | Observaciones |
 | --- | --- | --- | --- | --- | --- |
 | 2026-11-05 | Lisandro Villegas Henao | 33 | 33 | 0 | Ejecución exitosa de todas las pruebas automatizadas de RF-01 y relaciones 1:N en PHPUnit usando SQLite en memoria. |
+| 2026-11-11 | Lenin Aníbal Herrera Salgado | 77 | 77 | 0 | Suite completa en PHP 8.1.10, Laravel 10.50.4, PHPUnit 10.5.66 y SQLite en memoria. Incluye 44 pruebas nuevas de RF-02, RF-03 y RF-04; las 33 anteriores siguen pasando. |
 
-## 7. Estado de la revisión del 2026-11-10
+## 7. Estado de la revisión del 2026-11-10 (histórico)
 
-El resultado del 2026-11-05 es histórico y se conserva como fue registrado. No se volvió a ejecutar la suite en esta revisión: falta vendor/autoload.php. Los casos siguientes están diseñados, todavía no automatizados ni ejecutados. La prueba de ejemplo de tests/Unit no acredita una regla de negocio.
+El resultado del 2026-11-05 es histórico y se conserva como fue registrado. En esa revisión no se volvió a ejecutar la suite porque faltaba `vendor/autoload.php`. Los casos siguientes quedaron diseñados, sin automatizar en ese momento. La prueba de ejemplo de `tests/Unit` no acredita una regla de negocio. Esta revisión quedó superada por la sección 10.
 
 ## 8. Casos propuestos para anulación
 
@@ -97,13 +102,42 @@ Base común: reloj fijo en America/Bogota, función futura con capacidad 60 y 50
 | AN-12 | Integración RF-01 / concurrencia MySQL | Cambiar capacidad mientras se anula | Cupo igual a capacidad final menos entradas confirmadas; sin pérdida de actualización |
 | AN-13 | Interfaz / recorrido manual | Confirmar o rechazar el diálogo del botón | Confirmar actualiza estado; rechazar no envía solicitud |
 
-Comando previsto para pruebas funcionales: `php artisan test --filter=AnulacionBoletoTest`. Para regresión: `php artisan test`. AN-10 a AN-12 requieren conexiones independientes en MySQL y configuración dedicada por crear; SQLite no acredita esos bloqueos. Registrar el comando de esa suite cuando exista.
+**Estado de automatización al 2026-11-11:** AN-01 a AN-07 y AN-09 están cubiertos en `tests/Feature/AnulacionBoletosTest.php`, incluyendo los límites de la Decisión 3, el 404 y la integridad de cupos. AN-08 (rollback con fallo inyectado) no se automatizó en esta entrega. AN-10 a AN-12 requieren conexiones independientes en MySQL y configuración dedicada por crear; SQLite no acredita esos bloqueos. AN-13 depende de integrar el botón de anulación en el listado de boletos.
 
+Comando para pruebas funcionales: `php artisan test --filter=AnulacionBoletosTest`. Para regresión: `php artisan test`. Registrar el comando de la suite de concurrencia cuando exista.
 
-## 9. Verificación de implementación — 2026-11-10
+## 9. Verificación de implementación — 2026-11-10 (histórico)
 
 Se ejecutó `php artisan test`: **33 pruebas aprobadas, 90 aserciones** en PHP 8.5.12, Laravel 10.50.4 y SQLite en memoria. La suite existente quedó intacta.
 
 Por petición del usuario, no se incorporaron nuevas pruebas al repositorio. Como comprobación local del implementador, fuera del proyecto se ejecutaron 10 casos de anulación y renderizado del parcial (45 aserciones) y un caso de capacidad desactualizada (1 aserción), todos aprobados. Estos archivos temporales no sustituyen la automatización que debe entregar Lenin.
 
-AN-10 y AN-12 se comprobaron con dos procesos independientes en MariaDB 11.8.8 mediante el controlador mysql: se observaron ambas consultas esperando el bloqueo antes de liberarlo; la doble anulación devolvió asientos una vez, y la edición concurrente conservó el cupo correcto. No se ejecutó sobre MySQL de destino. AN-11 sigue pendiente por la venta no implementada. AN-13 solo tiene verificación del renderizado; el recorrido de navegador y su confirmación quedan pendientes del listado.
+AN-10 y AN-12 se comprobaron con dos procesos independientes en MariaDB 11.8.8 mediante el controlador mysql: se observaron ambas consultas esperando el bloqueo antes de liberarlo; la doble anulación devolvió asientos una vez, y la edición concurrente conservó el cupo correcto. No se ejecutó sobre MySQL de destino. AN-11 quedó pendiente en esa revisión; la venta ya está implementada, pero la prueba de concurrencia sigue requiriendo MySQL. AN-13 solo tiene verificación del renderizado; el recorrido de navegador y su confirmación quedan pendientes del listado.
+
+Esta sección es histórica; la verificación vigente de la suite está en la sección 10.
+
+## 10. Verificación de la suite de RF-02, RF-03 y RF-04 — 2026-11-11
+
+Se reemplazaron los tres archivos de prueba de ejemplo por pruebas de negocio y se ejecutó la suite completa:
+
+| Verificación | Resultado |
+| --- | --- |
+| Comando | `php artisan test` |
+| Entorno | PHP 8.1.10, Laravel 10.50.4, PHPUnit 10.5.66, SQLite en memoria |
+| Pruebas | 77 aprobadas, 0 fallidas |
+| Aserciones | 269 |
+| Archivos nuevos | `tests/Feature/VentaBoletosTest.php` (21), `tests/Feature/ConsultaBoletosTest.php` (12), `tests/Feature/AnulacionBoletosTest.php` (11) |
+| Regresión | Las 33 pruebas anteriores de RF-01 y relación 1:N siguen aprobando |
+
+Cobertura por archivo:
+
+- `VentaBoletosTest.php`: CA-02.1 a CA-02.5 y CA-03.2. Incluye formulario, validaciones, sobrecupo, cálculo del monto en servidor, descuento de cupos y correos válidos e inválidos.
+- `ConsultaBoletosTest.php`: CA-03.1, CA-03.2 y Decisión 1. Incluye listado, filtros, paginación, edición solo de boletos Confirmado y actualización limitada a nombre y correo.
+- `AnulacionBoletosTest.php`: CA-04.1 a CA-04.3 y Decisión 3. Incluye anulación, devolución única, doble anulación, función inactiva futura, función pasada, límites de un segundo, 404 e integridad de cupos.
+
+Límites de esta verificación:
+
+- SQLite en memoria no acredita los bloqueos reales de MySQL; AN-10 a AN-12 siguen pendientes de una suite de concurrencia con conexiones independientes.
+- AN-08 (rollback con fallo inyectado) no se automatizó; requeriría simular una excepción en la segunda escritura.
+- AN-13 (recorrido de navegador del botón de anulación) depende de incluir `boletos/_anular.blade.php` en el listado, que aún no está integrado.
+- Las pruebas comparan algunos mensajes exactos del controlador; un cambio de texto requiere actualizar la prueba correspondiente.
