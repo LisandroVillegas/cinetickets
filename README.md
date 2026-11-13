@@ -13,14 +13,15 @@ Sistema web de gestión de funciones de cine y venta de entradas, desarrollado p
 
 ## Estado revisado
 
-Implementación local del 10 de noviembre de 2026, sobre la base `21d35d2`, en la rama `feat/anulacion-boletos`.
+Estado de `main` revisado el 13 de noviembre de 2026.
 
 - RF-01: gestión de funciones implementada en controlador, vistas y pruebas.
-- RF-02: venta integrada en main; formulario, cálculo del monto y descuento de cupos comprobados localmente.
-- RF-03: consulta y edición pendientes de integrar desde la rama de Andrés; BoletoController sigue devolviendo 501.
-- RF-04: anulación implementada con transacción, bloqueo, validación de fecha y devolución única de asientos. Formulario disponible en `resources/views/boletos/_anular.blade.php`; falta incluirlo en el listado de Andrés, aún pendiente.
+- RF-02: venta con validaciones, cálculo del monto en el servidor y descuento de cupos.
+- RF-03: listado de boletos con filtros, paginación y edición de nombre y correo del cliente.
+- RF-04: botón **Anular boleto** integrado en la columna Acciones del listado. Aparece para boletos confirmados de funciones futuras, solicita confirmación y devuelve los asientos mediante una transacción. También permite anular funciones inactivas que todavía no hayan comenzado.
 - La edición de capacidad relee la función bajo bloqueo para no sobrescribir una devolución concurrente.
-- Suite existente ejecutada: 33 pruebas, 90 aserciones, sin fallos. No se añadieron ni modificaron archivos de pruebas por indicación del responsable. Ver límites y comprobaciones temporales en el informe de calidad.
+- Verificación actual: **77 pruebas aprobadas y 269 aserciones**. La suite pasó con PHP local y dentro de Sail; después de integrar el botón se repitió con PHP local, con el mismo resultado.
+- Docker funciona con MySQL 8.4 saludable y todas las migraciones ejecutadas. Cartelera, creación de funciones, ventas y listado respondieron HTTP 200. Falta comprobar el recorrido completo en navegador y la concurrencia de ventas/anulaciones en MySQL de destino.
 
 ## Preparación y ejecución local
 
@@ -41,7 +42,7 @@ php artisan migrate
 php artisan serve
 ```
 
-Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Composer y la suite se ejecutaron localmente. El recorrido web completo sigue pendiente por el listado. La zona horaria es America/Bogota; en instalaciones anteriores se debe revisar cómo se guardaron las fechas antes de desplegar el cambio. No se convirtieron datos existentes.
+Abrir `http://127.0.0.1:8000/funciones`. El layout actual carga Bootstrap por CDN y necesita conexión para esos estilos. Composer y la suite se ejecutaron localmente. El listado ya está integrado; la comprobación manual del recorrido completo en navegador sigue pendiente. La zona horaria es America/Bogota; en instalaciones anteriores se debe revisar cómo se guardaron las fechas antes de desplegar el cambio. No se convirtieron datos existentes.
 
 ## Desarrollo con Docker Desktop (Laravel Sail)
 
@@ -98,7 +99,7 @@ Las vistas actuales cargan Bootstrap por CDN y no requieren Vite. Si trabajas en
 php artisan test
 ```
 
-`phpunit.xml` fuerza SQLite en memoria, incluso cuando Docker define variables de MySQL. Las pruebas existentes cubren funciones y relaciones; `tests/Unit/ExampleTest.php` es una prueba de ejemplo, no de negocio. Se comprobaron dos escenarios concurrentes en MariaDB 11.8.8 con el controlador mysql, fuera del repositorio. Quedan pendientes la validación en la versión MySQL de destino y la integración con la venta real.
+`phpunit.xml` fuerza SQLite en memoria, incluso cuando Docker define variables de MySQL. Las pruebas existentes cubren funciones, ventas, consulta, edición, anulación y relaciones; `tests/Unit/ExampleTest.php` es una prueba de ejemplo, no de negocio. Se comprobaron dos escenarios concurrentes en MariaDB 11.8.8 con el controlador mysql, fuera del repositorio. Quedan pendientes la validación en la versión MySQL de destino y la concurrencia conjunta con la venta real en MySQL.
 
 ## Documentación
 
@@ -114,5 +115,7 @@ Enlace al tablero de Trello: pendiente de incorporar por el equipo.
 Los lineamientos requieren las etiquetas `entrega-s1`, `entrega-s2` y `entrega-final`, y entregar sus enlaces junto con Trello. Fechas indicadas: 2 y 9 de noviembre para seguimientos; 18 de noviembre de 2026 a las 11:59 p. m. para entrega final; sustentación el 25 de noviembre. Esta revisión no verifica entregas en Classroom ni acceso del docente.
 
 ## Verificación de la fusión a main — 2026-11-10
+
+**Registro histórico del 10 de noviembre; los pendientes de interfaz indicados aquí ya fueron integrados, como describe el estado revisado del 13 de noviembre.**
 
 La integración de Alex-henao conserva la venta previamente incorporada en main. Pasaron las 33 pruebas existentes (90 aserciones) y 12 comprobaciones temporales externas (63 aserciones): anulación, capacidad y venta seguida de anulación. No se añadieron tests al repositorio. La consulta y edición de Andrés y la incorporación del botón al listado siguen pendientes; la redirección a boletos.index todavía responde 501. No se certifica el flujo completo ni la concurrencia de venta/anulación en MySQL de destino.
