@@ -83,6 +83,7 @@
                             @else
                                 <span class="text-muted">No editable</span>
                             @endif
+                            @include('boletos._anular', ['boleto' => $boleto])
                         </td>
                     </tr>
                 @empty
