@@ -17,3 +17,13 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Documentación local y planes de trabajo
+/docs/
+
+# Archivos temporales del sistema y del editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
