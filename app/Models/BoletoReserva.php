@@ -23,11 +23,17 @@ class BoletoReserva extends Model
         'cantidad_entradas',
         'monto_total',
         'estado',
+        'precio_unitario',
+        'clave_operacion',
+        'anulada_en',
+        'motivo_anulacion',
     ];
 
     protected $casts = [
         'monto_total' => 'decimal:2',
         'fecha_compra' => 'datetime',
+        'precio_unitario' => 'decimal:2',
+        'anulada_en'      => 'datetime',
     ];
 
     /** Un boleto pertenece a una función. */
