@@ -3,40 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\PeliculaFuncion;
+use App\Models\Pelicula;
+use App\Models\Sala;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * RF-01: gestión de funciones / cartelera (CRUD de la entidad padre).
+ * RF-01: gestión de funciones / cartelera.
+ * Ahora integrado con catálogos (Fase 2).
  */
 class PeliculaFuncionController extends Controller
 {
     private const MENSAJES = [
         'required'       => 'El campo :attribute es obligatorio.',
-        'string'         => 'El campo :attribute debe ser texto.',
-        'max'            => 'El campo :attribute no puede superar :max.',
-        'integer'        => 'El campo :attribute debe ser un número entero.',
         'numeric'        => 'El campo :attribute debe ser un número.',
         'gt'             => 'El campo :attribute debe ser mayor que :value.',
         'date'           => 'El campo :attribute debe ser una fecha y hora válidas.',
         'after_or_equal' => 'La fecha y hora de la función no puede ser anterior a la actual.',
         'in'             => 'El valor de :attribute no es válido.',
+        'exists'         => 'El valor seleccionado para :attribute no es válido.',
     ];
 
     private const ATRIBUTOS = [
-        'titulo'          => 'título',
-        'genero'          => 'género',
-        'duracion_min'    => 'duración (min)',
-        'sala'            => 'sala',
+        'pelicula_id'     => 'película',
+        'sala_id'         => 'sala',
         'fecha_hora'      => 'fecha y hora',
         'precio_unitario' => 'precio unitario',
-        'capacidad_total' => 'capacidad total',
         'estado'          => 'estado',
     ];
 
-    /** Consultar la cartelera (lista todas las funciones con su número de boletos). */
+    /** Consultar la cartelera */
     public function index(): View
     {
         $funciones = PeliculaFuncion::withCount('boletos')
@@ -47,18 +45,31 @@ class PeliculaFuncionController extends Controller
     }
 
     /** Muestra el formulario para registrar una función. */
+    /** Muestra el formulario para registrar una función. */
     public function create(): View
     {
-        return view('funciones.create');
+        // Cargamos todas las películas y salas ordenadas
+        $peliculas = Pelicula::orderBy('titulo')->get();
+        $salas = Sala::orderBy('nombre')->get();
+
+        return view('funciones.create', compact('peliculas', 'salas'));
     }
 
-    /** Registrar una función nueva. */
+    /** Registrar una función nueva (con snapshot). */
     public function store(Request $request): RedirectResponse
     {
         $datos = $this->validar($request);
 
-        // CA-01.3: al crear, los asientos disponibles son iguales a la capacidad total.
-        $datos['asientos_disponibles'] = $datos['capacidad_total'];
+        $pelicula = Pelicula::findOrFail($datos['pelicula_id']);
+        $sala = Sala::findOrFail($datos['sala_id']);
+
+        // CREACIÓN DE LA INSTANTÁNEA (Snapshot)
+        $datos['titulo'] = $pelicula->titulo;
+        $datos['genero'] = $pelicula->genero;
+        $datos['duracion_min'] = $pelicula->duracion_min;
+        $datos['sala'] = $sala->nombre;
+        $datos['capacidad_total'] = $sala->capacidad; 
+        $datos['asientos_disponibles'] = $sala->capacidad;
         $datos['estado'] = 'Activa';
 
         PeliculaFuncion::create($datos);
@@ -68,27 +79,41 @@ class PeliculaFuncionController extends Controller
     }
 
     /** Muestra el formulario para editar una función existente. */
+   /** Muestra el formulario para editar una función existente. */
     public function edit(PeliculaFuncion $funcion): View
     {
-        return view('funciones.edit', compact('funcion'));
-    }
+        $peliculas = Pelicula::orderBy('titulo')->get();
+        $salas = Sala::orderBy('nombre')->get();
 
+        return view('funciones.edit', compact('funcion', 'peliculas', 'salas'));
+    }
     /** Actualizar una función. */
     public function update(Request $request, PeliculaFuncion $funcion): RedirectResponse
     {
         return DB::transaction(function () use ($request, $funcion): RedirectResponse {
-            // Releer bajo bloqueo: una venta o anulación puede haber cambiado los cupos.
             $actual = PeliculaFuncion::whereKey($funcion->id_funcion)->lockForUpdate()->firstOrFail();
             $datos = $this->validar($request, $actual);
-            $vendidos = $actual->capacidad_total - $actual->asientos_disponibles;
 
-            if ($datos['capacidad_total'] < $vendidos) {
+            $pelicula = Pelicula::findOrFail($datos['pelicula_id']);
+            $sala = Sala::findOrFail($datos['sala_id']);
+
+            $vendidos = $actual->capacidad_total - $actual->asientos_disponibles;
+            $nuevaCapacidad = $sala->capacidad; 
+
+            if ($nuevaCapacidad < $vendidos) {
                 return back()->withInput()->withErrors([
-                    'capacidad_total' => "La capacidad no puede ser menor que los asientos ya vendidos ($vendidos).",
+                    'sala_id' => "La capacidad de la nueva sala elegida ({$nuevaCapacidad}) no puede ser menor que los asientos ya vendidos ({$vendidos}).",
                 ]);
             }
 
-            $datos['asientos_disponibles'] = $datos['capacidad_total'] - $vendidos;
+            // ACTUALIZACIÓN DE LA INSTANTÁNEA
+            $datos['titulo'] = $pelicula->titulo;
+            $datos['genero'] = $pelicula->genero;
+            $datos['duracion_min'] = $pelicula->duracion_min;
+            $datos['sala'] = $sala->nombre;
+            $datos['capacidad_total'] = $nuevaCapacidad;
+            $datos['asientos_disponibles'] = $nuevaCapacidad - $vendidos;
+
             $actual->update($datos);
 
             return redirect()->route('funciones.index')
@@ -96,16 +121,12 @@ class PeliculaFuncionController extends Controller
         }, 3);
     }
 
-    /** Desactivar una función (inactivación lógica). */
     public function desactivar(PeliculaFuncion $funcion): RedirectResponse
     {
         $funcion->update(['estado' => 'Inactiva']);
-
-        return redirect()->route('funciones.index')
-            ->with('exito', 'La función quedó inactiva.');
+        return redirect()->route('funciones.index')->with('exito', 'La función quedó inactiva.');
     }
 
-    /** Eliminar físicamente; solo si no tiene boletos (CA-01.5 y Decisión 6). */
     public function destroy(PeliculaFuncion $funcion): RedirectResponse
     {
         if ($funcion->boletos()->exists()) {
@@ -114,21 +135,13 @@ class PeliculaFuncionController extends Controller
         }
 
         $funcion->delete();
-
-        return redirect()->route('funciones.index')
-            ->with('exito', 'Función eliminada correctamente.');
+        return redirect()->route('funciones.index')->with('exito', 'Función eliminada correctamente.');
     }
 
-    /**
-     * Reglas de validación compartidas por crear y actualizar.
-     * CA-01.1 (obligatorios), CA-01.2 (mayores a cero) y CA-01.4 (fecha no pasada).
-     */
     private function validar(Request $request, ?PeliculaFuncion $funcion = null): array
     {
         $reglasFecha = ['required', 'date'];
 
-        // La fecha solo debe ser futura si es una función nueva o si se cambió la fecha.
-        // Así se puede editar el precio de una función cuya fecha no se toca.
         $fechaCambio = $funcion === null
             || $request->input('fecha_hora') !== $funcion->fecha_hora->format('Y-m-d\TH:i');
 
@@ -137,13 +150,10 @@ class PeliculaFuncionController extends Controller
         }
 
         $reglas = [
-            'titulo'          => ['required', 'string', 'max:100'],
-            'genero'          => ['required', 'string', 'max:50'],
-            'duracion_min'    => ['required', 'integer', 'gt:0'],
-            'sala'            => ['required', 'string', 'max:20'],
+            'pelicula_id'     => ['required', 'exists:peliculas,id'],
+            'sala_id'         => ['required', 'exists:salas,id'],
             'fecha_hora'      => $reglasFecha,
             'precio_unitario' => ['required', 'numeric', 'gt:0', 'max:99999999.99'],
-            'capacidad_total' => ['required', 'integer', 'gt:0'],
         ];
 
         if ($funcion !== null) {
