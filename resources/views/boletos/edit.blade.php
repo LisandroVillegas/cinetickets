@@ -2,6 +2,8 @@
 
 @section('titulo', 'Editar datos del boleto')
 
+@php($camposFormulario = ['nombre_cliente', 'email_cliente'])
+
 @section('contenido')
     <div class="mb-3">
         <h1 class="h3">Editar datos del cliente</h1>
@@ -21,7 +23,7 @@
                 <dd class="col-sm-9">{{ $boleto->cantidad_entradas }} entrada(s)</dd>
 
                 <dt class="col-sm-3">Monto total</dt>
-                <dd class="col-sm-9">${{ number_format((float) $boleto->monto_total, 2, ',', '.') }}</dd>
+                <dd class="col-sm-9">COP ${{ number_format((float) $boleto->monto_total, 2, ',', '.') }}</dd>
 
                 <dt class="col-sm-3">Estado</dt>
                 <dd class="col-sm-9">{{ $boleto->estado }}</dd>
@@ -39,14 +41,13 @@
                 type="text"
                 name="nombre_cliente"
                 id="nombre_cliente"
+                aria-describedby="nombre_cliente-error" @error('nombre_cliente') aria-invalid="true" @enderror
                 class="form-control @error('nombre_cliente') is-invalid @enderror"
                 value="{{ old('nombre_cliente', $boleto->nombre_cliente) }}"
                 maxlength="100"
                 required
             >
-            @error('nombre_cliente')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <div id="nombre_cliente-error" class="invalid-feedback">@error('nombre_cliente') {{ $message }} @enderror</div>
         </div>
 
         <div class="mb-3">
@@ -55,17 +56,16 @@
                 type="email"
                 name="email_cliente"
                 id="email_cliente"
+                aria-describedby="email_cliente-error" @error('email_cliente') aria-invalid="true" @enderror
                 class="form-control @error('email_cliente') is-invalid @enderror"
                 value="{{ old('email_cliente', $boleto->email_cliente) }}"
                 maxlength="100"
                 required
             >
-            @error('email_cliente')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <div id="email_cliente-error" class="invalid-feedback">@error('email_cliente') {{ $message }} @enderror</div>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
             <a href="{{ route('boletos.index') }}" class="btn btn-outline-secondary">Volver a boletos</a>
         </div>

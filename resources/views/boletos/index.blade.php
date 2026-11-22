@@ -2,8 +2,10 @@
 
 @section('titulo', 'Boletos vendidos')
 
+@php($camposFormulario = ['cliente', 'funcion'])
+
 @section('contenido')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-3">
         <h1 class="h3 mb-0">Boletos vendidos</h1>
         <a href="{{ route('ventas.create') }}" class="btn btn-primary">Registrar venta</a>
     </div>
@@ -16,15 +18,18 @@
                     type="search"
                     name="cliente"
                     id="cliente"
-                    class="form-control"
+                    class="form-control @error('cliente') is-invalid @enderror"
+                    aria-describedby="cliente-error" @error('cliente') aria-invalid="true" @enderror
+                    maxlength="100"
                     value="{{ $filtros['cliente'] ?? '' }}"
                     placeholder="Nombre o correo"
                 >
+                <div id="cliente-error" class="invalid-feedback">@error('cliente') {{ $message }} @enderror</div>
             </div>
 
             <div class="col-md-5">
                 <label for="funcion" class="form-label">Función</label>
-                <select name="funcion" id="funcion" class="form-select">
+                <select name="funcion" id="funcion" class="form-select @error('funcion') is-invalid @enderror" aria-describedby="funcion-error" @error('funcion') aria-invalid="true" @enderror>
                     <option value="">Todas las funciones</option>
                     @foreach ($funciones as $funcion)
                         <option value="{{ $funcion->id_funcion }}"
@@ -33,9 +38,10 @@
                         </option>
                     @endforeach
                 </select>
+                <div id="funcion-error" class="invalid-feedback">@error('funcion') {{ $message }} @enderror</div>
             </div>
 
-            <div class="col-md-2 d-flex gap-2">
+            <div class="col-md-2 d-flex flex-wrap gap-2">
                 <button type="submit" class="btn btn-dark">Buscar</button>
                 <a href="{{ route('boletos.index') }}" class="btn btn-outline-secondary">Limpiar</a>
             </div>
@@ -44,16 +50,17 @@
 
     <div class="table-responsive">
         <table class="table table-striped table-bordered align-middle bg-white">
+            <caption class="visually-hidden">Boletos vendidos y acciones disponibles</caption>
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Correo</th>
-                    <th>Función</th>
-                    <th>Cantidad</th>
-                    <th>Monto total</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Función</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Monto total</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,17 +72,17 @@
                         <td>
                             {{ $boleto->funcion->titulo }}<br>
                             <small class="text-muted">
-                                {{ $boleto->funcion->fecha_hora->format('d/m/Y H:i') }} · Sala {{ $boleto->funcion->sala }}
+                                {{ $boleto->funcion->fecha_hora->format('d/m/Y H:i') }} · {{ $boleto->funcion->sala }}
                             </small>
                         </td>
                         <td>{{ $boleto->cantidad_entradas }}</td>
-                        <td>${{ number_format((float) $boleto->monto_total, 2, ',', '.') }}</td>
+                        <td>COP ${{ number_format((float) $boleto->monto_total, 2, ',', '.') }}</td>
                         <td>
                             <span class="badge {{ $boleto->estado === 'Confirmado' ? 'bg-success' : 'bg-secondary' }}">
                                 {{ $boleto->estado }}
                             </span>
                         </td>
-                        <td class="text-nowrap">
+                        <td class="acciones">
                             @if ($boleto->estado === 'Confirmado')
                                 <a href="{{ route('boletos.edit', $boleto) }}" class="btn btn-sm btn-outline-primary">
                                     Editar cliente
@@ -88,14 +95,14 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center text-muted">No se encontraron boletos.</td>
+                        <td colspan="8" class="text-center text-muted">{{ !empty($filtros['cliente']) || !empty($filtros['funcion']) ? 'No hay boletos que coincidan con estos filtros. Prueba otra búsqueda o limpia los filtros.' : 'Aún no hay boletos registrados. Registra una venta para comenzar.' }}</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center">
         <small class="text-muted">
             Mostrando {{ $boletos->firstItem() ?? 0 }}–{{ $boletos->lastItem() ?? 0 }} de {{ $boletos->total() }} boletos
         </small>
@@ -103,13 +110,13 @@
             <nav aria-label="Paginación de boletos">
                 <ul class="pagination mb-0">
                     <li class="page-item {{ $boletos->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $boletos->previousPageUrl() ?? '#' }}" aria-label="Anterior">Anterior</a>
+                        @if($boletos->onFirstPage())<span class="page-link" aria-disabled="true">Anterior</span>@else<a class="page-link" href="{{ $boletos->previousPageUrl() }}" rel="prev">Anterior</a>@endif
                     </li>
                     <li class="page-item disabled">
                         <span class="page-link">Página {{ $boletos->currentPage() }} de {{ $boletos->lastPage() }}</span>
                     </li>
                     <li class="page-item {{ $boletos->hasMorePages() ? '' : 'disabled' }}">
-                        <a class="page-link" href="{{ $boletos->nextPageUrl() ?? '#' }}" aria-label="Siguiente">Siguiente</a>
+                        @if(!$boletos->hasMorePages())<span class="page-link" aria-disabled="true">Siguiente</span>@else<a class="page-link" href="{{ $boletos->nextPageUrl() }}" rel="next">Siguiente</a>@endif
                     </li>
                 </ul>
             </nav>
