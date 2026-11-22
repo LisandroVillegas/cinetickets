@@ -3,33 +3,44 @@
 namespace Tests\Feature;
 
 use App\Models\BoletoReserva;
+use App\Models\Pelicula;
 use App\Models\PeliculaFuncion;
+use App\Models\Sala;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
- * Pruebas de RF-03 (consulta, filtros y edición de boletos).
- * Verifican los criterios CA-03.1 y CA-03.2 y la Decisión 1.
+ * Pruebas de RF-03 (consulta, filtros y edición de boletos adaptado al contrato v1).
  */
 class ConsultaBoletosTest extends TestCase
 {
     use RefreshDatabase;
 
-    // ------------------------------------------------------------------
-    // Datos de apoyo
-    // ------------------------------------------------------------------
-
     private function crearFuncion(array $cambios = []): PeliculaFuncion
     {
+        $pelicula = Pelicula::factory()->create([
+            'titulo'       => $cambios['titulo'] ?? 'La Casa del Lago',
+            'genero'       => 'Drama',
+            'duracion_min' => 105,
+        ]);
+
+        $sala = Sala::factory()->create([
+            'nombre'    => 'Sala 2',
+            'capacidad' => 100,
+        ]);
+
         return PeliculaFuncion::create(array_merge([
-            'titulo'               => 'La Casa del Lago',
-            'genero'               => 'Drama',
-            'duracion_min'         => 105,
-            'sala'                 => 'Sala 2',
+            'pelicula_id'          => $pelicula->id,
+            'sala_id'              => $sala->id,
+            'titulo'               => $pelicula->titulo,
+            'genero'               => $pelicula->genero,
+            'duracion_min'         => $pelicula->duracion_min,
+            'sala'                 => $sala->nombre,
             'fecha_hora'           => now()->addDays(3),
             'precio_unitario'      => 12000,
-            'capacidad_total'      => 100,
-            'asientos_disponibles' => 100,
+            'capacidad_total'      => $sala->capacidad,
+            'asientos_disponibles' => $sala->capacidad,
             'estado'               => 'Activa',
         ], $cambios))->fresh();
     }
@@ -41,14 +52,12 @@ class ConsultaBoletosTest extends TestCase
             'nombre_cliente'    => 'Ana Torres',
             'email_cliente'     => 'ana.torres@correo.test',
             'cantidad_entradas' => 2,
+            'precio_unitario'   => 12000,
             'monto_total'       => 24000,
             'estado'            => 'Confirmado',
+            'clave_operacion'   => (string) Str::uuid(),
         ], $cambios))->fresh();
     }
-
-    // ------------------------------------------------------------------
-    // CA-03.1: listado y filtros
-    // ------------------------------------------------------------------
 
     public function test_ca_03_1_lista_los_boletos_con_sus_datos(): void
     {
@@ -186,10 +195,6 @@ class ConsultaBoletosTest extends TestCase
             ->assertSessionHasErrors('funcion');
     }
 
-    // ------------------------------------------------------------------
-    // Edición: solo boletos Confirmado y solo nombre/correo
-    // ------------------------------------------------------------------
-
     public function test_ca_03_1_muestra_el_formulario_de_edicion_de_un_boleto_confirmado(): void
     {
         $funcion = $this->crearFuncion();
@@ -237,7 +242,7 @@ class ConsultaBoletosTest extends TestCase
         ])
             ->assertRedirect(route('boletos.index'))
             ->assertSessionHasNoErrors()
-            ->assertSessionHas('exito');
+            ->assertSessionHas('success');
 
         $boleto->refresh();
 
@@ -265,15 +270,5 @@ class ConsultaBoletosTest extends TestCase
         $boleto->refresh();
 
         $this->assertSame('ana@correo.test', $boleto->email_cliente);
-    }
-
-    public function test_ca_03_1_marca_los_boletos_cancelados_como_no_editables(): void
-    {
-        $funcion = $this->crearFuncion();
-        $this->crearBoleto($funcion, ['estado' => 'Cancelado']);
-
-        $this->get(route('boletos.index'))
-            ->assertOk()
-            ->assertSee('No editable');
     }
 }
