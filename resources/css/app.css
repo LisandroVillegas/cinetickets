@@ -1,0 +1,38 @@
+:root {
+    --cine-focus: #084298;
+    --cine-border: #dee2e6;
+    --cine-radius: .5rem;
+}
+body { line-height: 1.6; }
+h1, h2 { line-height: 1.25; }
+main { min-width: 0; }
+main:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--cine-focus); outline-offset: 3px; }
+.navbar :focus-visible { outline-color: #ffda6a; }
+.skip-link { display: block; padding: .75rem 1rem; background: white; color: var(--cine-focus); }
+.navbar .nav-link { min-height: 44px; display: flex; align-items: center; }
+.navbar .nav-link.active { text-decoration: underline; text-underline-offset: .4rem; font-weight: 600; }
+.btn, summary, .page-link { min-height: 44px; }
+.btn { align-content: center; }
+.card { border-radius: var(--cine-radius); box-shadow: none; }
+.card-body { padding: 1.5rem; }
+.form-control, .form-select { font-size: 1rem; min-height: 44px; }
+.form-text, .text-muted { color: #56616c !important; }
+.table td, .table th, dd, [data-resumen], .alert { overflow-wrap: anywhere; }
+.table td { max-width: 24rem; min-width: 6rem; }
+.table caption { color: #56616c; }
+.acciones { min-width: 13rem !important; max-width: 18rem !important; white-space: normal; }
+.acciones > .btn, .acciones > form { margin-bottom: .5rem; }
+.anulacion summary { cursor: pointer; color: #842029; padding-block: .5rem; }
+.anulacion[open] { border-top: 1px solid var(--cine-border); padding-top: .5rem; }
+.anulacion p { white-space: normal; }
+@media (max-width: 575.98px) {
+    .navbar .container { align-items: flex-start; }
+    .navbar-nav { width: 100%; }
+    .card-body { padding: 1rem; }
+    .pagination { flex-wrap: wrap; }
+    .acciones { min-width: 12rem !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
