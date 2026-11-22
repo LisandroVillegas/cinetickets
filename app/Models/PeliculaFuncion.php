@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class PeliculaFuncion extends Model
 {
+    use HasFactory;
+
     // Laravel supone nombres en plural y una columna "id"; aquí los indicamos a mano.
     protected $table = 'Pelicula_Funcion';
     protected $primaryKey = 'id_funcion';
