@@ -1,0 +1,1 @@
+"Listo muchachos, ya subí a vistas-cinetikets los factories actualizados, todas las pruebas automatizadas del contrato v1 y el informe en docs/plan-de-pruebas.md. Pasaron 46 pruebas y quedaron 32 marcadas para cuando Lisandro y Andrés terminen de conectar las rutas y servicios del contrato. Alex, ya puedes tomar el reporte para el informe."

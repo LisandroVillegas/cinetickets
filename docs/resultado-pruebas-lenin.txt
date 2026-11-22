@@ -1,0 +1,652 @@
+
+   FAIL  Tests\Unit\DineroTest
+  Ô£ô calcula sin errores de punto flotante en centavos                                                                               0.23s  
+  Ô¿» rechaza desbordamiento del limite decimal 10 2                                                                                  0.04s  
+
+   PASS  Tests\Unit\ExampleTest
+  Ô£ô that true is true                                                                                                               0.01s  
+
+   FAIL  Tests\Feature\AnulacionBoletosTest
+  Ô¿» ca 04 1 y ca 04 2 anula el boleto con motivo y devuelve los asientos                                                            0.33s  
+  Ô¿» exige motivo de anulacion                                                                                                       0.07s  
+  Ô¿» ca 04 3 rechaza anular dos veces el mismo boleto                                                                                0.07s  
+  Ô¿» ca 04 2 solo devuelve los asientos del boleto anulado                                                                           0.07s  
+  Ô¿» decision 3 permite anular una funcion inactiva pero futura                                                                      0.06s  
+  Ô£ô decision 3 rechaza una funcion que ya comenzo                                                                                   0.06s  
+  Ô£ô decision 3 rechaza la funcion exactamente en el instante actual                                                                 0.06s  
+  Ô£ô devuelve 404 si el boleto no existe                                                                                             0.08s  
+  Ô£ô rechaza una devolucion que supere la capacidad                                                                                  0.06s  
+
+   FAIL  Tests\Feature\CancelacionFuncionTest
+  Ô¿» cancela funcion con varios boletos y devuelve aforo integro una sola vez                                                        0.07s  
+  Ô¿» no permite cancelar funcion sin motivo ni funcion pasada                                                                        0.06s  
+
+   FAIL  Tests\Feature\ConsultaBoletosTest
+  Ô¿» ca 03 1 lista los boletos con sus datos                                                                                         0.59s  
+  Ô¿» ca 03 1 filtra por nombre del cliente                                                                                           0.43s  
+  Ô¿» ca 03 1 filtra por correo del cliente                                                                                           0.44s  
+  Ô¿» ca 03 1 filtra por funcion                                                                                                      0.07s  
+  Ô¿» ca 03 1 combina los filtros de cliente y funcion                                                                                0.07s  
+  Ô¿» ca 03 1 pagina los resultados de quince en quince                                                                               0.55s  
+  Ô£ô ca 03 1 rechaza un filtro de funcion inexistente                                                                                0.07s  
+  Ô¿» ca 03 1 muestra el formulario de edicion de un boleto confirmado                                                                0.40s  
+  Ô£ô ca 03 1 no permite editar un boleto cancelado                                                                                   0.08s  
+  Ô¿» decision 1 actualiza solo nombre y correo                                                                                       0.12s  
+  Ô£ô ca 03 2 rechaza un correo invalido al editar                                                                                    0.11s  
+
+   FAIL  Tests\Feature\IdempotenciaVentaTest
+  Ô¿» reintentar misma clave y mismos datos devuelve mismo boleto sin descontar doble                                                 0.10s  
+  Ô¿» misma clave con datos distintos rechaza sin crear otra venta                                                                    0.10s  
+  Ô¿» cambiar precio de funcion no altera comprobantes antiguos                                                                       0.09s  
+
+   PASS  Tests\Feature\MigracionCatalogosTest
+  Ô£ô boletos antiguos conservan total y tienen precio unitario nulo                                                                  0.08s  
+
+   FAIL  Tests\Feature\PeliculaFuncionCrudTest
+  Ô¿» cp31 la cartelera carga                                                                                                         0.41s  
+  Ô£ô cp01 registra una funcion con datos validos                                                                                     0.07s  
+  Ô£ô cp02 a cp08 ca 01 1 cada campo es obligatorio with data set "pelicula id"                                                       0.07s  
+  Ô£ô cp02 a cp08 ca 01 1 cada campo es obligatorio with data set "sala id"                                                           0.06s  
+  Ô£ô cp02 a cp08 ca 01 1 cada campo es obligatorio with data set "fecha hora"                                                        0.07s  
+  Ô£ô cp02 a cp08 ca 01 1 cada campo es obligatorio with data set "precio unitario"                                                   0.07s  
+  Ô£ô cp09 a cp17 ca 01 2 rechaza valores invalidos with data set " c p-09 precio igual a cero (l├¡mite)"                              0.07s  
+  Ô£ô cp09 a cp17 ca 01 2 rechaza valores invalidos with data set " c p-10 precio negativo"                                           0.07s  
+  Ô£ô cp09 a cp17 ca 01 2 rechaza valores invalidos with data set " c p-17 precio con texto"                                          0.07s  
+  Ô£ô cp11 ca 01 2 acepta precio minimo valido                                                                                        0.07s  
+  Ô£ô cp18 ca 01 3 los asientos disponibles inician igual a la capacidad de sala                                                      0.09s  
+  Ô£ô cp19 ca 01 4 rechaza una fecha pasada                                                                                           0.10s  
+  Ô£ô cp20 ca 01 4 acepta una fecha futura                                                                                            0.09s  
+  Ô¿» cp21 elimina una funcion sin boletos                                                                                            0.09s  
+  Ô£ô cp22 ca 01 5 no elimina una funcion con boletos                                                                                 0.09s  
+  Ô£ô cp23 desactiva una funcion                                                                                                      0.07s  
+  Ô¿» cp26 recalcula los asientos disponibles al cambiar de sala sin boletos                                                          0.07s  
+  Ô£ô cp27 rechaza editar el precio de una funcion cuya fecha ya paso                                                                 0.07s  
+  Ô£ô cp28 rechaza cambiar la fecha a una fecha pasada                                                                                0.06s  
+
+   FAIL  Tests\Feature\ProgramacionFuncionesTest
+  Ô¿» lote de dos fechas por dos horarios crea cuatro funciones independientes                                                        0.09s  
+  Ô£ô permite mismo horario en salas distintas                                                                                        0.07s  
+  Ô¿» respeta pausa de 15 minutos entre funciones                                                                                     0.09s  
+  Ô¿» detecta colision al cruzar medianoche                                                                                           0.07s  
+  Ô¿» si una fila del lote tiene conflicto no guarda ninguna                                                                          0.05s  
+  Ô¿» rechaza fechas o horarios duplicados y mas de 100 combinaciones                                                                 0.05s  
+  Ô¿» no permite programar con catalogo inactivo pero conserva funciones previas                                                      0.05s  
+  Ô¿» bloquea cambio de programacion si tiene boletos historicos                                                                      0.05s  
+
+   PASS  Tests\Feature\RelacionFuncionBoletoTest
+  Ô£ô cp29 una funcion tiene muchos boletos y cada boleto pertenece a su funcion                                                      0.06s  
+  Ô£ô cp30 la base de datos impide borrar una funcion con boletos                                                                     0.05s  
+
+   FAIL  Tests\Feature\VentaBoletosTest
+  Ô¿» ca 02 1 el formulario lista solo peliculas con funciones vendibles                                                              0.07s  
+  Ô£ô ca 02 1 rechaza funciones no vendibles with data set "inactiva"                                                                 0.06s  
+  Ô¿» ca 02 1 rechaza funciones no vendibles with data set "cancelada"                                                                0.06s  
+  Ô£ô ca 02 1 rechaza funciones no vendibles with data set "agotada"                                                                  0.05s  
+  Ô£ô ca 02 1 rechaza funciones no vendibles with data set "pasada"                                                                   0.06s  
+  Ô£ô ca 02 1 rechaza una funcion inexistente                                                                                         0.06s  
+  Ô£ô ca 02 2 rechaza cantidades invalidas with data set "cero"                                                                       0.05s  
+  Ô£ô ca 02 2 rechaza cantidades invalidas with data set "negativa"                                                                   0.05s  
+  Ô£ô ca 02 2 rechaza cantidades invalidas with data set "decimal"                                                                    0.06s  
+  Ô£ô ca 02 2 rechaza cantidades invalidas with data set "texto"                                                                      0.05s  
+  Ô£ô ca 02 2 rechaza cantidades invalidas with data set "nula"                                                                       0.05s  
+  Ô£ô ca 02 2 permite comprar exactamente los asientos disponibles                                                                    0.05s  
+  Ô£ô ca 02 3 rechaza el sobrecupo                                                                                                    0.06s  
+  Ô¿» ca 02 4 y ca 02 5 registra la venta y redirige al comprobante                                                                   0.05s  
+  Ô£ô ca 02 4 el monto se calcula en el servidor e ignora el enviado                                                                  0.05s  
+  Ô£ô ca 03 2 rechaza correos invalidos with data set "sin arroba"                                                                    0.05s  
+  Ô£ô ca 03 2 rechaza correos invalidos with data set "sin dominio"                                                                   0.06s  
+  Ô£ô ca 03 2 rechaza correos invalidos with data set "con espacio"                                                                   0.05s  
+  Ô£ô ca 03 2 acepta correos validos with data set "simple"                                                                           0.05s  
+  Ô£ô ca 03 2 acepta correos validos with data set "con puntos y signos"                                                              0.05s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Unit\DineroTest > rechaza desbordamiento del limite decimal 10 2                                                          
+  Failed asserting that exception of type "Illuminate\Validation\ValidationException" is thrown.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AnulacionBoletosTest > ca 04 1 y ca 04 2 anula el boleto con motivo y devuelve los asientos                       
+  Session is missing expected key [success].
+Failed asserting that false is true.
+
+  at tests\Feature\AnulacionBoletosTest.php:85
+     81Ôûò         $this->patch(route('boletos.anular', $boleto), [
+     82Ôûò             'motivo_anulacion' => 'Cliente solicit├│ cancelaci├│n por viaje',
+     83Ôûò         ])
+     84Ôûò             ->assertRedirect(route('boletos.index'))
+  Ô×£  85Ôûò             ->assertSessionHas('success');
+     86Ôûò 
+     87Ôûò         $boleto->refresh();
+     88Ôûò 
+     89Ôûò         $this->assertSame('Cancelado', $boleto->estado);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AnulacionBoletosTest > exige motivo de anulacion                                                                  
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\AnulacionBoletosTest.php:102
+     98Ôûò         $boleto = $this->crearBoleto($funcion, ['cantidad_entradas' => 3]);
+     99Ôûò 
+    100Ôûò         $this->patch(route('boletos.anular', $boleto), [
+    101Ôûò             'motivo_anulacion' => '',
+  Ô×£ 102Ôûò         ])->assertSessionHasErrors('motivo_anulacion');
+    103Ôûò 
+    104Ôûò         $this->assertEquals(50, $funcion->fresh()->asientos_disponibles);
+    105Ôûò         $this->assertSame('Confirmado', $boleto->fresh()->estado);
+    106Ôûò     }
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AnulacionBoletosTest > ca 04 3 rechaza anular dos veces el mismo boleto                                           
+  Session is missing expected key [success].
+Failed asserting that false is true.
+
+  at tests\Feature\AnulacionBoletosTest.php:114
+    110Ôûò         $funcion = $this->crearFuncion(['asientos_disponibles' => 50]);
+    111Ôûò         $boleto = $this->crearBoleto($funcion, ['cantidad_entradas' => 3]);
+    112Ôûò 
+    113Ôûò         $this->patch(route('boletos.anular', $boleto), ['motivo_anulacion' => 'Motivo 1'])
+  Ô×£ 114Ôûò             ->assertSessionHas('success');
+    115Ôûò 
+    116Ôûò         $this->patch(route('boletos.anular', $boleto), ['motivo_anulacion' => 'Motivo 2'])
+    117Ôûò             ->assertRedirect(route('boletos.index'))
+    118Ôûò             ->assertSessionHas('error');
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AnulacionBoletosTest > ca 04 2 solo devuelve los asientos del boleto anulado                                      
+  Session is missing expected key [success].
+Failed asserting that false is true.
+
+  at tests\Feature\AnulacionBoletosTest.php:141
+    137Ôûò             'cantidad_entradas' => 2,
+    138Ôûò         ]);
+    139Ôûò 
+    140Ôûò         $this->patch(route('boletos.anular', $boletoUno), ['motivo_anulacion' => 'Error en compra'])
+  Ô×£ 141Ôûò             ->assertSessionHas('success');
+    142Ôûò 
+    143Ôûò         $this->assertEquals(53, $funcion->fresh()->asientos_disponibles);
+    144Ôûò         $this->assertSame('Cancelado', $boletoUno->fresh()->estado);
+    145Ôûò         $this->assertSame('Confirmado', $boletoDos->fresh()->estado);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AnulacionBoletosTest > decision 3 permite anular una funcion inactiva pero futura                                 
+  Session is missing expected key [success].
+Failed asserting that false is true.
+
+  at tests\Feature\AnulacionBoletosTest.php:157
+    153Ôûò         ]);
+    154Ôûò         $boleto = $this->crearBoleto($funcion);
+    155Ôûò 
+    156Ôûò         $this->patch(route('boletos.anular', $boleto), ['motivo_anulacion' => 'Solicitud del cliente'])
+  Ô×£ 157Ôûò             ->assertSessionHas('success');
+    158Ôûò 
+    159Ôûò         $this->assertEquals(53, $funcion->fresh()->asientos_disponibles);
+    160Ôûò         $this->assertSame('Cancelado', $boleto->fresh()->estado);
+    161Ôûò     }
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\CancelacionFuncionTest > cancela funcion con varios boletos y devuelve aforo integro una sola vez         Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\CancelacionFuncionTest > no permite cancelar funcion sin motivo ni funcion pasada                         Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 lista los boletos con sus datos                                                     
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\ConsultaBoletosTest.php:72
+     68Ôûò             'monto_total'    => 24000,
+     69Ôûò         ]);
+     70Ôûò 
+     71Ôûò         $this->get(route('boletos.index'))
+  Ô×£  72Ôûò             ->assertOk()
+     73Ôûò             ->assertSee('Ana Torres')
+     74Ôûò             ->assertSee('ana@correo.test')
+     75Ôûò             ->assertSee('La Casa del Lago')
+     76Ôûò             ->assertSee('$24.000,00')
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 filtra por nombre del cliente                                                       
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\ConsultaBoletosTest.php:94
+     90Ôûò             'email_cliente'  => 'luis@correo.test',
+     91Ôûò         ]);
+     92Ôûò 
+     93Ôûò         $respuesta = $this->get(route('boletos.index', ['cliente' => 'Ana']))
+  Ô×£  94Ôûò             ->assertOk()
+     95Ôûò             ->assertSee('Ana Torres')
+     96Ôûò             ->assertDontSee('Luis P├®rez');
+     97Ôûò 
+     98Ôûò         $this->assertSame(1, $respuesta->viewData('boletos')->total());
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 filtra por correo del cliente                                                       
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\ConsultaBoletosTest.php:115
+    111Ôûò             'email_cliente'  => 'luis@correo.test',
+    112Ôûò         ]);
+    113Ôûò 
+    114Ôûò         $respuesta = $this->get(route('boletos.index', ['cliente' => 'luis@']))
+  Ô×£ 115Ôûò             ->assertOk()
+    116Ôûò             ->assertSee('Luis P├®rez')
+    117Ôûò             ->assertDontSee('Ana Torres');
+    118Ôûò 
+    119Ôûò         $this->assertSame(1, $respuesta->viewData('boletos')->total());
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 filtra por funcion                             UniqueConstraintViolationException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre (Connection: sqlite, SQL: insert into "salas" ("nombre", "capacidad", "activa", "updated_at", "created_at") values (Sala 2, 100, 1, 2026-11-22 12:14:49, 2026-11-22 12:14:49))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+    820Ôûò         // message to include the bindings with SQL, which will make this exception a
+    821Ôûò         // lot more helpful to the developer instead of just the database's errors.
+    822Ôûò         catch (Exception $e) {
+    823Ôûò             if ($this->isUniqueConstraintError($e)) {
+  Ô×£ 824Ôûò                 throw new UniqueConstraintViolationException(
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:587
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre")
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 combina los filtros de cliente y funcion       UniqueConstraintViolationException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre (Connection: sqlite, SQL: insert into "salas" ("nombre", "capacidad", "activa", "updated_at", "created_at") values (Sala 2, 100, 1, 2026-11-22 12:14:49, 2026-11-22 12:14:49))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+    820Ôûò         // message to include the bindings with SQL, which will make this exception a
+    821Ôûò         // lot more helpful to the developer instead of just the database's errors.
+    822Ôûò         catch (Exception $e) {
+    823Ôûò             if ($this->isUniqueConstraintError($e)) {
+  Ô×£ 824Ôûò                 throw new UniqueConstraintViolationException(
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:587
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre")
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 pagina los resultados de quince en quince                                           
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\ConsultaBoletosTest.php:176
+    172Ôûò                 'email_cliente'  => "cliente{$numero}@correo.test",
+    173Ôûò             ]);
+    174Ôûò         }
+    175Ôûò 
+  Ô×£ 176Ôûò         $primeraPagina = $this->get(route('boletos.index'))->assertOk()->viewData('boletos');
+    177Ôûò 
+    178Ôûò         $this->assertSame(16, $primeraPagina->total());
+    179Ôûò         $this->assertSame(15, $primeraPagina->count());
+    180Ôûò         $this->assertSame(15, $primeraPagina->perPage());
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > ca 03 1 muestra el formulario de edicion de un boleto confirmado                            
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\ConsultaBoletosTest.php:207
+    203Ôûò             'email_cliente'  => 'ana@correo.test',
+    204Ôûò         ]);
+    205Ôûò 
+    206Ôûò         $this->get(route('boletos.edit', $boleto))
+  Ô×£ 207Ôûò             ->assertOk()
+    208Ôûò             ->assertSee('Ana Torres')
+    209Ôûò             ->assertSee('ana@correo.test');
+    210Ôûò     }
+    211Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ConsultaBoletosTest > decision 1 actualiza solo nombre y correo              UniqueConstraintViolationException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre (Connection: sqlite, SQL: insert into "salas" ("nombre", "capacidad", "activa", "updated_at", "created_at") values (Sala 2, 100, 1, 2026-11-22 12:14:50, 2026-11-22 12:14:50))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+    820Ôûò         // message to include the bindings with SQL, which will make this exception a
+    821Ôûò         // lot more helpful to the developer instead of just the database's errors.
+    822Ôûò         catch (Exception $e) {
+    823Ôûò             if ($this->isUniqueConstraintError($e)) {
+  Ô×£ 824Ôûò                 throw new UniqueConstraintViolationException(
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:587
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre")
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\IdempotenciaVentaTest > reintentar misma clave y mismos datos devuelve mismo boleto sin descontar doble   Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\IdempotenciaVentaTest > misma clave con datos distintos rechaza sin crear otra venta                      Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\IdempotenciaVentaTest > cambiar precio de funcion no altera comprobantes antiguos                         Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\PeliculaFuncionCrudTest > cp31 la cartelera carga                                                                 
+  Expected response status code [200] but received 500.
+Failed asserting that 500 is identical to 200.
+
+  at tests\Feature\PeliculaFuncionCrudTest.php:118
+    114Ôûò     {
+    115Ôûò         $this->crearFuncion();
+    116Ôûò 
+    117Ôûò         $this->get(route('funciones.index'))
+  Ô×£ 118Ôûò             ->assertOk()
+    119Ôûò             ->assertSee('La Casa del Lago');
+    120Ôûò     }
+    121Ôûò 
+    122Ôûò     public function test_cp01_registra_una_funcion_con_datos_validos(): void
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\PeliculaFuncionCrudTest > cp21 elimina una funcion sin boletos                                                    
+  Session is missing expected key [success].
+Failed asserting that false is true.
+
+  at tests\Feature\PeliculaFuncionCrudTest.php:199
+    195Ôûò         $funcion = $this->crearFuncion();
+    196Ôûò 
+    197Ôûò         $this->delete(route('funciones.destroy', $funcion))
+    198Ôûò             ->assertRedirect(route('funciones.index'))
+  Ô×£ 199Ôûò             ->assertSessionHas('success');
+    200Ôûò 
+    201Ôûò         $this->assertDatabaseMissing('Pelicula_Funcion', ['id_funcion' => $funcion->id_funcion]);
+    202Ôûò     }
+    203Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\PeliculaFuncionCrudTest > cp26 recalcula los asientos disponibles al cambiar de sala sin boletos                  
+  Session has unexpected errors: 
+
+{
+    "default": [
+        "El campo estado es obligatorio."
+    ]
+}
+Failed asserting that true is false.
+
+  at tests\Feature\PeliculaFuncionCrudTest.php:232
+    228Ôûò         $funcion   = $this->crearFuncion(['capacidad_total' => 100, 'asientos_disponibles' => 100]);
+    229Ôûò         $nuevaSala = Sala::factory()->create(['capacidad' => 50]);
+    230Ôûò 
+    231Ôûò         $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['sala_id' => $nuevaSala->id]))
+  Ô×£ 232Ôûò             ->assertSessionHasNoErrors();
+    233Ôûò 
+    234Ôûò         $this->assertEquals(50, $funcion->fresh()->capacidad_total);
+    235Ôûò         $this->assertEquals(50, $funcion->fresh()->asientos_disponibles);
+    236Ôûò     }
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > lote de dos fechas por dos horarios crea cuatro funcionesÔÇª   RouteNotFoundException   
+  Route [funciones.programacion.store] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+    473Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    474Ôûò             return $url;
+    475Ôûò         }
+    476Ôûò 
+  Ô×£ 477Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    478Ôûò     }
+    479Ôûò 
+    480Ôûò     /**
+    481Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:811
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > respeta pausa de 15 minutos entre funciones                                           
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\ProgramacionFuncionesTest.php:93
+     89Ôûò             'pelicula_id'     => $pelicula->id,
+     90Ôûò             'sala_id'         => $sala->id,
+     91Ôûò             'fecha_hora'      => "{$fecha} 20:14",
+     92Ôûò             'precio_unitario' => '15000.00',
+  Ô×£  93Ôûò         ])->assertSessionHasErrors();
+     94Ôûò 
+     95Ôûò         $this->assertDatabaseCount('Pelicula_Funcion', 1);
+     96Ôûò 
+     97Ôûò         // A las 20:15 exactas debe permitir.
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > detecta colision al cruzar medianoche                                                 
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests\Feature\ProgramacionFuncionesTest.php:129
+    125Ôûò             'pelicula_id'     => $pelicula->id,
+    126Ôûò             'sala_id'         => $sala->id,
+    127Ôûò             'fecha_hora'      => "{$dia2} 01:00",
+    128Ôûò             'precio_unitario' => '15000.00',
+  Ô×£ 129Ôûò         ])->assertSessionHasErrors();
+    130Ôûò 
+    131Ôûò         $this->assertDatabaseCount('Pelicula_Funcion', 1);
+    132Ôûò     }
+    133Ôûò
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > si una fila del lote tiene conflicto no guarda ninguna                        Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > rechaza fechas o horarios duplicados y mas de 100 combinacÔÇª  RouteNotFoundException   
+  Route [funciones.programacion.store] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+    473Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    474Ôûò             return $url;
+    475Ôûò         }
+    476Ôûò 
+  Ô×£ 477Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    478Ôûò     }
+    479Ôûò 
+    480Ôûò     /**
+    481Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:811
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > no permite programar con catalogo inactivo pero conserva funciones previas    Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\ProgramacionFuncionesTest > bloquea cambio de programacion si tiene boletos historicos                    Error   
+  Class "Database\Factories\PeliculaFuncionFactory" not found
+
+  at vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+    825Ôûò     public static function factoryForModel(string $modelName)
+    826Ôûò     {
+    827Ôûò         $factory = static::resolveFactoryName($modelName);
+    828Ôûò 
+  Ô×£ 829Ôûò         return $factory::new();
+    830Ôûò     }
+    831Ôûò 
+    832Ôûò     /**
+    833Ôûò      * Specify the callback that should be invoked to guess factory names based on dynamic relationship names.
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\Factory.php:829
+  2   vendor\laravel\framework\src\Illuminate\Database\Eloquent\Factories\HasFactory.php:16
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\VentaBoletosTest > ca 02 1 el formulario lista solo peliculas con funcioneÔÇª  UniqueConstraintViolationException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre (Connection: sqlite, SQL: insert into "salas" ("nombre", "capacidad", "activa", "updated_at", "created_at") values (Sala 1, 100, 1, 2026-11-22 12:14:53, 2026-11-22 12:14:53))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+    820Ôûò         // message to include the bindings with SQL, which will make this exception a
+    821Ôûò         // lot more helpful to the developer instead of just the database's errors.
+    822Ôûò         catch (Exception $e) {
+    823Ôûò             if ($this->isUniqueConstraintError($e)) {
+  Ô×£ 824Ôûò                 throw new UniqueConstraintViolationException(
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:824
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:587
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: salas.nombre")
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\VentaBoletosTest > ca 02 1 rechaza funciones no vendibles with data set "cancelada"              QueryException   
+  SQLSTATE[23000]: Integrity constraint violation: 19 CHECK constraint failed: estado (Connection: sqlite, SQL: insert into "Pelicula_Funcion" ("pelicula_id", "sala_id", "titulo", "genero", "duracion_min", "sala", "fecha_hora", "precio_unitario", "capacidad_total", "asientos_disponibles", "estado") values (1, 1, Aventura en el Espacio, Ciencia ficci├│n, 120, Sala 1, 2026-11-24 12:14:54, 15000, 100, 100, Cancelada))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+    825Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Ôûò                 );
+    827Ôûò             }
+    828Ôûò 
+  Ô×£ 829Ôûò             throw new QueryException(
+    830Ôûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    831Ôûò             );
+    832Ôûò         }
+    833Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:587
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 19 CHECK constraint failed: estado")
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\VentaBoletosTest > ca 02 4 y ca 02 5 registra la venta y redirige al comprobante         RouteNotFoundException   
+  Route [boletos.show] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+    473Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    474Ôûò             return $url;
+    475Ôûò         }
+    476Ôûò 
+  Ô×£ 477Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    478Ôûò     }
+    479Ôûò 
+    480Ôûò     /**
+    481Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:477
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:811
+
+
+  Tests:    32 failed, 46 passed (160 assertions)
+  Duration: 8.58s
+
