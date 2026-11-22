@@ -21,6 +21,28 @@ yarn-error.log
 # Documentación local y planes de trabajo
 /docs/
 
+# Herramientas y configuración local ajenas a la aplicación
+/.agents/
+/.codex/
+/.aws/
+/.superpowers/
+/.worktrees/
+/worktrees/
+AGENTS.md
+CLAUDE.md
+
+# Resultados de pruebas, capturas y archivos de ejecución local
+/coverage/
+/test-results/
+/playwright-report/
+*.log
+/database/*.sqlite
+/database/*.sqlite-*
+
+# Variables de entorno locales; conservar la plantilla de instalación
+.env.*
+!.env.example
+
 # Archivos temporales del sistema y del editor
 .DS_Store
 Thumbs.db
