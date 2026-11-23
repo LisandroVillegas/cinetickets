@@ -3,55 +3,75 @@
 namespace Tests\Feature;
 
 use App\Models\BoletoReserva;
+use App\Models\Pelicula;
 use App\Models\PeliculaFuncion;
+use App\Models\Sala;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 /**
- * Pruebas de RF-01 (CRUD de funciones).
- * Cada prueba indica el caso del plan (CP-xx en docs/plan-de-pruebas.md)
- * y el criterio de aceptación (CA-xx.x) que verifica.
+ * Pruebas de RF-01 (CRUD de funciones con catálogos de película y sala).
+ * Cada prueba indica el caso del plan (CP-xx) y el criterio que verifica.
  */
 class PeliculaFuncionCrudTest extends TestCase
 {
     use RefreshDatabase;
 
+    private Pelicula $pelicula;
+    private Sala $sala;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->pelicula = Pelicula::create([
+            'titulo'       => 'Órbita',
+            'genero'       => 'Ciencia ficción',
+            'duracion_min' => 120,
+            'activa'       => true,
+        ]);
+
+        $this->sala = Sala::create([
+            'nombre'    => 'Sala 1',
+            'capacidad' => 80,
+            'activa'    => true,
+        ]);
+    }
+
     // ------------------------------------------------------------------
     // Datos de apoyo
     // ------------------------------------------------------------------
 
-    /** Datos válidos para registrar una función. */
+    /** Datos que envía el formulario para programar una función. */
     private function datosValidos(array $cambios = []): array
     {
         return array_merge([
-            'titulo'          => 'Aventura en el Espacio',
-            'genero'          => 'Ciencia ficción',
-            'duracion_min'    => 120,
-            'sala'            => 'Sala 1',
+            'pelicula_id'     => $this->pelicula->id,
+            'sala_id'         => $this->sala->id,
             'fecha_hora'      => now()->addDays(2)->format('Y-m-d\TH:i'),
             'precio_unitario' => 15000,
-            'capacidad_total' => 100,
         ], $cambios);
     }
 
-    /** Crea una función directamente en la base de datos. */
+    /** Crea una función directamente en la base de datos, con su instantánea. */
     private function crearFuncion(array $cambios = []): PeliculaFuncion
     {
         return PeliculaFuncion::create(array_merge([
-            'titulo'               => 'La Casa del Lago',
-            'genero'               => 'Drama',
-            'duracion_min'         => 105,
-            'sala'                 => 'Sala 2',
+            'pelicula_id'          => $this->pelicula->id,
+            'sala_id'              => $this->sala->id,
+            'titulo'               => $this->pelicula->titulo,
+            'genero'               => $this->pelicula->genero,
+            'duracion_min'         => $this->pelicula->duracion_min,
+            'sala'                 => $this->sala->nombre,
             'fecha_hora'           => now()->addDays(3),
             'precio_unitario'      => 12000,
-            'capacidad_total'      => 100,
-            'asientos_disponibles' => 100,
+            'capacidad_total'      => $this->sala->capacidad,
+            'asientos_disponibles' => $this->sala->capacidad,
             'estado'               => 'Activa',
         ], $cambios))->fresh();
     }
 
-    /** Crea un boleto de una función. */
     private function crearBoleto(PeliculaFuncion $funcion): BoletoReserva
     {
         return BoletoReserva::create([
@@ -68,31 +88,25 @@ class PeliculaFuncionCrudTest extends TestCase
     private function datosEdicion(PeliculaFuncion $funcion, array $cambios = []): array
     {
         return array_merge([
-            'titulo'          => $funcion->titulo,
-            'genero'          => $funcion->genero,
-            'duracion_min'    => $funcion->duracion_min,
-            'sala'            => $funcion->sala,
+            'pelicula_id'     => $funcion->pelicula_id,
+            'sala_id'         => $funcion->sala_id,
             'fecha_hora'      => $funcion->fecha_hora->format('Y-m-d\TH:i'),
             'precio_unitario' => $funcion->precio_unitario,
-            'capacidad_total' => $funcion->capacidad_total,
             'estado'          => $funcion->estado,
         ], $cambios);
     }
 
     // ------------------------------------------------------------------
-    // Proveedores de datos (partición de equivalencia y valores límite)
+    // Proveedores de datos
     // ------------------------------------------------------------------
 
     public static function camposObligatorios(): array
     {
         return [
-            'titulo'          => ['titulo'],
-            'genero'          => ['genero'],
-            'duracion_min'    => ['duracion_min'],
-            'sala'            => ['sala'],
+            'película'        => ['pelicula_id'],
+            'sala'            => ['sala_id'],
             'fecha_hora'      => ['fecha_hora'],
             'precio_unitario' => ['precio_unitario'],
-            'capacidad_total' => ['capacidad_total'],
         ];
     }
 
@@ -101,25 +115,14 @@ class PeliculaFuncionCrudTest extends TestCase
         return [
             'CP-09 precio igual a cero (límite)' => ['precio_unitario', 0],
             'CP-10 precio negativo'              => ['precio_unitario', -1],
-            'CP-12 capacidad igual a cero'       => ['capacidad_total', 0],
-            'CP-13 capacidad negativa'           => ['capacidad_total', -5],
-            'CP-15 capacidad no entera'          => ['capacidad_total', 10.5],
-            'CP-16 duración igual a cero'        => ['duracion_min', 0],
             'CP-17 precio con texto'             => ['precio_unitario', 'abc'],
-        ];
-    }
-
-    public static function limitesValidos(): array
-    {
-        return [
-            'CP-11 precio mínimo 0.01'  => ['precio_unitario', 0.01],
-            'CP-14 capacidad mínima 1'  => ['capacidad_total', 1],
-            'duración mínima 1'         => ['duracion_min', 1],
+            'CP-35 película inexistente'         => ['pelicula_id', 99999],
+            'CP-36 sala inexistente'             => ['sala_id', 99999],
         ];
     }
 
     // ------------------------------------------------------------------
-    // Consulta
+    // Consulta y registro
     // ------------------------------------------------------------------
 
     public function test_cp31_la_cartelera_carga(): void
@@ -128,12 +131,8 @@ class PeliculaFuncionCrudTest extends TestCase
 
         $this->get(route('funciones.index'))
             ->assertOk()
-            ->assertSee('La Casa del Lago');
+            ->assertSee('Órbita');
     }
-
-    // ------------------------------------------------------------------
-    // Registro: CA-01.1, CA-01.2, CA-01.3 y CA-01.4
-    // ------------------------------------------------------------------
 
     public function test_cp01_registra_una_funcion_con_datos_validos(): void
     {
@@ -142,7 +141,6 @@ class PeliculaFuncionCrudTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseCount('Pelicula_Funcion', 1);
-        $this->assertDatabaseHas('Pelicula_Funcion', ['titulo' => 'Aventura en el Espacio']);
     }
 
     #[DataProvider('camposObligatorios')]
@@ -157,7 +155,7 @@ class PeliculaFuncionCrudTest extends TestCase
     }
 
     #[DataProvider('valoresInvalidos')]
-    public function test_cp09_a_cp17_ca_01_2_rechaza_valores_invalidos(string $campo, mixed $valor): void
+    public function test_cp09_a_cp36_rechaza_valores_invalidos(string $campo, mixed $valor): void
     {
         $this->post(route('funciones.store'), $this->datosValidos([$campo => $valor]))
             ->assertSessionHasErrors($campo);
@@ -165,24 +163,64 @@ class PeliculaFuncionCrudTest extends TestCase
         $this->assertDatabaseCount('Pelicula_Funcion', 0);
     }
 
-    #[DataProvider('limitesValidos')]
-    public function test_cp11_cp14_ca_01_2_acepta_los_valores_limite_validos(string $campo, mixed $valor): void
+    public function test_cp11_ca_01_2_acepta_el_precio_minimo_valido(): void
     {
-        $this->post(route('funciones.store'), $this->datosValidos([$campo => $valor]))
+        $this->post(route('funciones.store'), $this->datosValidos(['precio_unitario' => 0.01]))
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseCount('Pelicula_Funcion', 1);
     }
 
-    public function test_cp18_ca_01_3_los_asientos_disponibles_inician_igual_a_la_capacidad(): void
+    public function test_cp18_el_servidor_copia_los_datos_del_catalogo_y_los_asientos_inician_en_la_capacidad(): void
     {
-        $this->post(route('funciones.store'), $this->datosValidos(['capacidad_total' => 80]));
+        $this->post(route('funciones.store'), $this->datosValidos());
 
         $funcion = PeliculaFuncion::firstOrFail();
 
+        $this->assertEquals($this->pelicula->id, $funcion->pelicula_id);
+        $this->assertEquals($this->sala->id, $funcion->sala_id);
+        $this->assertSame('Órbita', $funcion->titulo);
+        $this->assertSame('Ciencia ficción', $funcion->genero);
+        $this->assertEquals(120, $funcion->duracion_min);
+        $this->assertSame('Sala 1', $funcion->sala);
         $this->assertEquals(80, $funcion->capacidad_total);
         $this->assertEquals(80, $funcion->asientos_disponibles);
         $this->assertSame('Activa', $funcion->estado);
+    }
+
+    public function test_cp32_ignora_los_datos_derivados_que_envie_el_navegador(): void
+    {
+        $this->post(route('funciones.store'), $this->datosValidos([
+            'titulo'               => 'Título manipulado',
+            'capacidad_total'      => 9999,
+            'asientos_disponibles' => 9999,
+        ]));
+
+        $funcion = PeliculaFuncion::firstOrFail();
+
+        $this->assertSame('Órbita', $funcion->titulo);
+        $this->assertEquals(80, $funcion->capacidad_total);
+        $this->assertEquals(80, $funcion->asientos_disponibles);
+    }
+
+    public function test_cp33_rechaza_programar_con_una_pelicula_inactiva(): void
+    {
+        $this->pelicula->update(['activa' => false]);
+
+        $this->post(route('funciones.store'), $this->datosValidos())
+            ->assertSessionHasErrors('pelicula_id');
+
+        $this->assertDatabaseCount('Pelicula_Funcion', 0);
+    }
+
+    public function test_cp34_rechaza_programar_en_una_sala_inactiva(): void
+    {
+        $this->sala->update(['activa' => false]);
+
+        $this->post(route('funciones.store'), $this->datosValidos())
+            ->assertSessionHasErrors('sala_id');
+
+        $this->assertDatabaseCount('Pelicula_Funcion', 0);
     }
 
     public function test_cp19_ca_01_4_rechaza_una_fecha_pasada(): void
@@ -243,47 +281,55 @@ class PeliculaFuncionCrudTest extends TestCase
     }
 
     // ------------------------------------------------------------------
-    // Actualización: Decisión 2 (capacidad vs. asientos vendidos)
+    // Actualización
     // ------------------------------------------------------------------
 
-    public function test_cp24_rechaza_una_capacidad_menor_que_los_asientos_vendidos(): void
+    public function test_cp24_con_boletos_solo_cambia_el_precio_y_no_la_sala_ni_la_pelicula(): void
     {
-        // Capacidad 100 con 70 disponibles => 30 vendidos.
-        $funcion = $this->crearFuncion(['capacidad_total' => 100, 'asientos_disponibles' => 70]);
+        $funcion = $this->crearFuncion();
+        $this->crearBoleto($funcion);
+        $otraSala = Sala::create(['nombre' => 'Sala 2', 'capacidad' => 50, 'activa' => true]);
 
-        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['capacidad_total' => 20]))
-            ->assertSessionHasErrors('capacidad_total');
+        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, [
+            'sala_id'         => $otraSala->id,
+            'precio_unitario' => 18000,
+        ]))->assertSessionHasNoErrors();
 
-        $this->assertEquals(100, $funcion->fresh()->capacidad_total);
-        $this->assertEquals(70, $funcion->fresh()->asientos_disponibles);
+        $funcion = $funcion->fresh();
+
+        $this->assertEquals(18000, (float) $funcion->precio_unitario);
+        $this->assertEquals($this->sala->id, $funcion->sala_id);
+        $this->assertSame('Sala 1', $funcion->sala);
+        $this->assertEquals(80, $funcion->capacidad_total);
     }
 
-    public function test_cp25_capacidad_igual_a_los_vendidos_deja_cero_disponibles(): void
+    public function test_cp25_sin_boletos_cambiar_de_sala_recalcula_capacidad_y_asientos(): void
     {
-        $funcion = $this->crearFuncion(['capacidad_total' => 100, 'asientos_disponibles' => 70]);
+        $funcion = $this->crearFuncion();
+        $otraSala = Sala::create(['nombre' => 'Sala 2', 'capacidad' => 50, 'activa' => true]);
 
-        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['capacidad_total' => 30]))
+        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['sala_id' => $otraSala->id]))
             ->assertSessionHasNoErrors();
 
-        $this->assertEquals(0, $funcion->fresh()->asientos_disponibles);
+        $funcion = $funcion->fresh();
+
+        $this->assertSame('Sala 2', $funcion->sala);
+        $this->assertEquals(50, $funcion->capacidad_total);
+        $this->assertEquals(50, $funcion->asientos_disponibles);
     }
 
-    public function test_cp26_recalcula_los_asientos_disponibles_al_cambiar_la_capacidad(): void
+    public function test_cp26_no_modifica_una_funcion_con_boletos_que_ya_empezo(): void
     {
-        $funcion = $this->crearFuncion(['capacidad_total' => 100, 'asientos_disponibles' => 70]);
+        $funcion = $this->crearFuncion(['fecha_hora' => now()->subDay()]);
+        $this->crearBoleto($funcion);
 
-        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['capacidad_total' => 50]))
-            ->assertSessionHasNoErrors();
+        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['precio_unitario' => 18000]))
+            ->assertSessionHasErrors('operacion');
 
-        // 50 de capacidad menos 30 vendidos => 20 disponibles.
-        $this->assertEquals(20, $funcion->fresh()->asientos_disponibles);
+        $this->assertEquals(12000, (float) $funcion->fresh()->precio_unitario);
     }
 
-    // ------------------------------------------------------------------
-    // Actualización: regla de la fecha al editar
-    // ------------------------------------------------------------------
-
-    public function test_cp27_permite_editar_el_precio_de_una_funcion_cuya_fecha_ya_paso(): void
+    public function test_cp27_permite_editar_el_precio_de_una_funcion_sin_boletos_cuya_fecha_ya_paso(): void
     {
         $funcion = $this->crearFuncion(['fecha_hora' => now()->subDay()]);
 
@@ -300,5 +346,15 @@ class PeliculaFuncionCrudTest extends TestCase
 
         $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['fecha_hora' => $fechaPasada]))
             ->assertSessionHasErrors('fecha_hora');
+    }
+
+    public function test_cp37_no_reactiva_una_funcion_inactiva_que_ya_empezo(): void
+    {
+        $funcion = $this->crearFuncion(['fecha_hora' => now()->subDay(), 'estado' => 'Inactiva']);
+
+        $this->put(route('funciones.update', $funcion), $this->datosEdicion($funcion, ['estado' => 'Activa']))
+            ->assertSessionHasErrors('operacion');
+
+        $this->assertSame('Inactiva', $funcion->fresh()->estado);
     }
 }
