@@ -86,7 +86,7 @@ class PeliculaFuncionController extends Controller
     }
 
     /** Actualizar una función. */
-    public function update(Request $request, PeliculaFuncion $funcion, ProgramacionService $servicio): RedirectResponse
+   public function update(Request $request, PeliculaFuncion $funcion, ProgramacionService $servicio): RedirectResponse
     {
         return DB::transaction(function () use ($request, $funcion, $servicio): RedirectResponse {
             // Releer bajo bloqueo: una venta o anulación puede cambiar la función mientras se edita.
@@ -94,6 +94,7 @@ class PeliculaFuncionController extends Controller
             $tieneBoletos = $actual->boletos()->exists();
 
             $datos = $this->validar($request, $actual, $tieneBoletos);
+            $datos['estado'] = $datos['estado'] ?? $actual->estado;
 
             // Reactivar solo si la función todavía no empezó.
             if ($datos['estado'] === 'Activa' && $actual->estado === 'Inactiva' && $actual->fecha_hora->isPast()) {
@@ -124,8 +125,9 @@ class PeliculaFuncionController extends Controller
                 $servicio->reprogramar($actual, $datos);
             }
 
-            return redirect()->route('funciones.index')
-                ->with('exito', 'Función actualizada correctamente.');
+           return redirect()->route('funciones.index')
+                ->with('exito', 'Función actualizada correctamente.')
+                ->with('success', 'Función actualizada correctamente.');
         }, 3);
     }
 
@@ -153,7 +155,7 @@ class PeliculaFuncionController extends Controller
     }
 
     /** Eliminar físicamente; solo si no tiene boletos (CA-01.5 y Decisión 6). */
-    public function destroy(PeliculaFuncion $funcion): RedirectResponse
+   public function destroy(PeliculaFuncion $funcion): RedirectResponse
     {
         if ($funcion->boletos()->exists()) {
             return redirect()->route('funciones.index')
@@ -163,7 +165,8 @@ class PeliculaFuncionController extends Controller
         $funcion->delete();
 
         return redirect()->route('funciones.index')
-            ->with('exito', 'Función eliminada correctamente.');
+            ->with('exito', 'Función eliminada correctamente.')
+            ->with('success', 'Función eliminada correctamente.');
     }
 
     /** ¿Se está cambiando la película, la sala o el horario? */
@@ -200,7 +203,7 @@ class PeliculaFuncionController extends Controller
         ];
 
         if ($funcion !== null) {
-            $reglas['estado'] = ['required', 'in:Activa,Inactiva'];
+            $reglas['estado'] = ['nullable', 'in:Activa,Inactiva'];
         }
 
         if (! $soloPrecioYEstado) {
