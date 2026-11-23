@@ -2,28 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PeliculaFuncion;
 use App\Models\Pelicula;
+use App\Models\PeliculaFuncion;
 use App\Models\Sala;
+use App\Services\ProgramacionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
  * RF-01: gestión de funciones / cartelera.
- * Ahora integrado con catálogos (Fase 2).
+ * Una función se programa eligiendo una película y una sala de los catálogos.
+ * El servidor copia los datos del catálogo (instantánea) y comprueba los cruces de horario.
  */
 class PeliculaFuncionController extends Controller
 {
     private const MENSAJES = [
         'required'       => 'El campo :attribute es obligatorio.',
+        'integer'        => 'El campo :attribute debe ser un número entero.',
         'numeric'        => 'El campo :attribute debe ser un número.',
         'gt'             => 'El campo :attribute debe ser mayor que :value.',
+        'max'            => 'El campo :attribute no puede superar :max.',
         'date'           => 'El campo :attribute debe ser una fecha y hora válidas.',
         'after_or_equal' => 'La fecha y hora de la función no puede ser anterior a la actual.',
         'in'             => 'El valor de :attribute no es válido.',
-        'exists'         => 'El valor seleccionado para :attribute no es válido.',
+        'exists'         => 'El valor seleccionado en :attribute no existe.',
     ];
 
     private const ATRIBUTOS = [
@@ -34,7 +39,7 @@ class PeliculaFuncionController extends Controller
         'estado'          => 'estado',
     ];
 
-    /** Consultar la cartelera */
+    /** Consultar la cartelera (lista todas las funciones con su número de boletos). */
     public function index(): View
     {
         $funciones = PeliculaFuncion::withCount('boletos')
@@ -44,89 +49,110 @@ class PeliculaFuncionController extends Controller
         return view('funciones.index', compact('funciones'));
     }
 
-    /** Muestra el formulario para registrar una función. */
-    /** Muestra el formulario para registrar una función. */
+    /** Formulario para programar: solo ofrece películas y salas activas. */
     public function create(): View
     {
-        // Cargamos todas las películas y salas ordenadas
-        $peliculas = Pelicula::orderBy('titulo')->get();
-        $salas = Sala::orderBy('nombre')->get();
-
-        return view('funciones.create', compact('peliculas', 'salas'));
+        return view('funciones.create', [
+            'peliculas' => Pelicula::activas()->orderBy('titulo')->get(),
+            'salas'     => Sala::activas()->orderBy('nombre')->get(),
+        ]);
     }
 
-    /** Registrar una función nueva (con snapshot). */
-    public function store(Request $request): RedirectResponse
+    /** Registrar una función nueva (con comprobación de cruces). */
+    public function store(Request $request, ProgramacionService $servicio): RedirectResponse
     {
         $datos = $this->validar($request);
 
-        $pelicula = Pelicula::findOrFail($datos['pelicula_id']);
-        $sala = Sala::findOrFail($datos['sala_id']);
-
-        // CREACIÓN DE LA INSTANTÁNEA (Snapshot)
-        $datos['titulo'] = $pelicula->titulo;
-        $datos['genero'] = $pelicula->genero;
-        $datos['duracion_min'] = $pelicula->duracion_min;
-        $datos['sala'] = $sala->nombre;
-        $datos['capacidad_total'] = $sala->capacidad; 
-        $datos['asientos_disponibles'] = $sala->capacidad;
-        $datos['estado'] = 'Activa';
-
-        PeliculaFuncion::create($datos);
+        $servicio->programarUna(
+            (int) $datos['pelicula_id'],
+            (int) $datos['sala_id'],
+            Carbon::parse($datos['fecha_hora']),
+            $datos['precio_unitario']
+        );
 
         return redirect()->route('funciones.index')
             ->with('exito', 'Función registrada correctamente.');
     }
 
-    /** Muestra el formulario para editar una función existente. */
-   /** Muestra el formulario para editar una función existente. */
+    /** Formulario de edición: incluye la película y la sala actuales aunque estén inactivas. */
     public function edit(PeliculaFuncion $funcion): View
     {
-        $peliculas = Pelicula::orderBy('titulo')->get();
-        $salas = Sala::orderBy('nombre')->get();
-
-        return view('funciones.edit', compact('funcion', 'peliculas', 'salas'));
+        return view('funciones.edit', [
+            'funcion'      => $funcion,
+            'peliculas'    => Pelicula::where('activa', true)->orWhere('id', $funcion->pelicula_id)->orderBy('titulo')->get(),
+            'salas'        => Sala::where('activa', true)->orWhere('id', $funcion->sala_id)->orderBy('nombre')->get(),
+            'tieneBoletos' => $funcion->boletos()->exists(),
+        ]);
     }
+
     /** Actualizar una función. */
-    public function update(Request $request, PeliculaFuncion $funcion): RedirectResponse
+    public function update(Request $request, PeliculaFuncion $funcion, ProgramacionService $servicio): RedirectResponse
     {
-        return DB::transaction(function () use ($request, $funcion): RedirectResponse {
+        return DB::transaction(function () use ($request, $funcion, $servicio): RedirectResponse {
+            // Releer bajo bloqueo: una venta o anulación puede cambiar la función mientras se edita.
             $actual = PeliculaFuncion::whereKey($funcion->id_funcion)->lockForUpdate()->firstOrFail();
-            $datos = $this->validar($request, $actual);
+            $tieneBoletos = $actual->boletos()->exists();
 
-            $pelicula = Pelicula::findOrFail($datos['pelicula_id']);
-            $sala = Sala::findOrFail($datos['sala_id']);
+            $datos = $this->validar($request, $actual, $tieneBoletos);
 
-            $vendidos = $actual->capacidad_total - $actual->asientos_disponibles;
-            $nuevaCapacidad = $sala->capacidad; 
-
-            if ($nuevaCapacidad < $vendidos) {
+            // Reactivar solo si la función todavía no empezó.
+            if ($datos['estado'] === 'Activa' && $actual->estado === 'Inactiva' && $actual->fecha_hora->isPast()) {
                 return back()->withInput()->withErrors([
-                    'sala_id' => "La capacidad de la nueva sala elegida ({$nuevaCapacidad}) no puede ser menor que los asientos ya vendidos ({$vendidos}).",
+                    'operacion' => 'No se puede reactivar una función que ya empezó.',
                 ]);
             }
 
-            // ACTUALIZACIÓN DE LA INSTANTÁNEA
-            $datos['titulo'] = $pelicula->titulo;
-            $datos['genero'] = $pelicula->genero;
-            $datos['duracion_min'] = $pelicula->duracion_min;
-            $datos['sala'] = $sala->nombre;
-            $datos['capacidad_total'] = $nuevaCapacidad;
-            $datos['asientos_disponibles'] = $nuevaCapacidad - $vendidos;
+            if ($tieneBoletos) {
+                // Con boletos solo cambian el precio (para ventas futuras) y el estado.
+                if ($actual->fecha_hora->isPast()) {
+                    return back()->withInput()->withErrors([
+                        'operacion' => 'La función ya empezó y tiene boletos: no se puede modificar.',
+                    ]);
+                }
 
-            $actual->update($datos);
+                $actual->update([
+                    'precio_unitario' => $datos['precio_unitario'],
+                    'estado'          => $datos['estado'],
+                ]);
+            } elseif (! $this->cambiaProgramacion($datos, $actual)) {
+                // Sin cambio de película, sala ni horario: solo precio y estado.
+                $actual->update([
+                    'precio_unitario' => $datos['precio_unitario'],
+                    'estado'          => $datos['estado'],
+                ]);
+            } else {
+                $servicio->reprogramar($actual, $datos);
+            }
 
             return redirect()->route('funciones.index')
                 ->with('exito', 'Función actualizada correctamente.');
         }, 3);
     }
 
+    /** Desactivar una función (detiene nuevas ventas; sigue ocupando la sala). */
     public function desactivar(PeliculaFuncion $funcion): RedirectResponse
     {
         $funcion->update(['estado' => 'Inactiva']);
-        return redirect()->route('funciones.index')->with('exito', 'La función quedó inactiva.');
+
+        return redirect()->route('funciones.index')
+            ->with('exito', 'La función quedó inactiva.');
     }
 
+    /** Reactivar una función inactiva, solo si todavía no empezó. */
+    public function activar(PeliculaFuncion $funcion): RedirectResponse
+    {
+        if ($funcion->fecha_hora->isPast()) {
+            return redirect()->route('funciones.index')
+                ->with('error', 'No se puede reactivar una función que ya empezó.');
+        }
+
+        $funcion->update(['estado' => 'Activa']);
+
+        return redirect()->route('funciones.index')
+            ->with('exito', 'La función quedó activa.');
+    }
+
+    /** Eliminar físicamente; solo si no tiene boletos (CA-01.5 y Decisión 6). */
     public function destroy(PeliculaFuncion $funcion): RedirectResponse
     {
         if ($funcion->boletos()->exists()) {
@@ -135,29 +161,61 @@ class PeliculaFuncionController extends Controller
         }
 
         $funcion->delete();
-        return redirect()->route('funciones.index')->with('exito', 'Función eliminada correctamente.');
+
+        return redirect()->route('funciones.index')
+            ->with('exito', 'Función eliminada correctamente.');
     }
 
-    private function validar(Request $request, ?PeliculaFuncion $funcion = null): array
+    /** ¿Se está cambiando la película, la sala o el horario? */
+    private function cambiaProgramacion(array $datos, PeliculaFuncion $actual): bool
     {
-        $reglasFecha = ['required', 'date'];
+        return (int) $datos['pelicula_id'] !== (int) $actual->pelicula_id
+            || (int) $datos['sala_id'] !== (int) $actual->sala_id
+            || ! $this->mismaFecha($datos['fecha_hora'] ?? null, $actual);
+    }
 
-        $fechaCambio = $funcion === null
-            || $request->input('fecha_hora') !== $funcion->fecha_hora->format('Y-m-d\TH:i');
-
-        if ($fechaCambio) {
-            $reglasFecha[] = 'after_or_equal:now';
+    /** Compara fecha y hora hasta el minuto, sin depender del formato de entrada. */
+    private function mismaFecha(?string $entrada, PeliculaFuncion $actual): bool
+    {
+        if ($entrada === null || $entrada === '') {
+            return false;
         }
 
+        try {
+            return Carbon::parse($entrada)->format('Y-m-d H:i') === $actual->fecha_hora->format('Y-m-d H:i');
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Reglas de validación compartidas por crear y actualizar.
+     * CA-01.1 (obligatorios), CA-01.2 (precio mayor que cero) y CA-01.4 (fecha no pasada).
+     * Si la función ya tiene boletos solo se validan el precio y el estado.
+     */
+    private function validar(Request $request, ?PeliculaFuncion $funcion = null, bool $soloPrecioYEstado = false): array
+    {
         $reglas = [
-            'pelicula_id'     => ['required', 'exists:peliculas,id'],
-            'sala_id'         => ['required', 'exists:salas,id'],
-            'fecha_hora'      => $reglasFecha,
             'precio_unitario' => ['required', 'numeric', 'gt:0', 'max:99999999.99'],
         ];
 
         if ($funcion !== null) {
             $reglas['estado'] = ['required', 'in:Activa,Inactiva'];
+        }
+
+        if (! $soloPrecioYEstado) {
+            $reglasFecha = ['required', 'date'];
+
+            // La fecha solo debe ser futura si es una función nueva o si se cambió la fecha.
+            if ($funcion === null || ! $this->mismaFecha($request->input('fecha_hora'), $funcion)) {
+                $reglasFecha[] = 'after_or_equal:now';
+            }
+
+            $reglas += [
+                'pelicula_id' => ['required', 'integer', 'exists:peliculas,id'],
+                'sala_id'     => ['required', 'integer', 'exists:salas,id'],
+                'fecha_hora'  => $reglasFecha,
+            ];
         }
 
         return $request->validate($reglas, self::MENSAJES, self::ATRIBUTOS);
